@@ -1,0 +1,5 @@
+tensorflow
+recommenders
+pickle
+numpy
+tqdm
