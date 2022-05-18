@@ -6,7 +6,7 @@ from tqdm import tqdm
 import random
 import tensorflow as tf
 
-def train(model, dataset, sampler, **kwargs):
+def sas_train(model, dataset, sampler, **kwargs):
         """
         High level function for model training as well as
         evaluation on the validation and test dataset
@@ -85,7 +85,7 @@ def train(model, dataset, sampler, **kwargs):
                     f"epoch: {epoch}, time: {T},  test (NDCG@10: {t_test[0]}, HR@10: {t_test[1]})"
                 )
 
-def evaluate(model_, dataset, target_user_n=1000, target_item_n=-1):
+def sas_evaluate(model_, dataset, target_user_n=1000, target_item_n=-1):
         """
         Evaluation on the test users (users with at least 3 items)
 
