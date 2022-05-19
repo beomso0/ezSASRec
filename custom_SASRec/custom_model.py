@@ -1,4 +1,3 @@
-import pickle 
 from recommenders.models.sasrec.model import SASREC
 from recommenders.utils.timer import Timer
 import numpy as np
@@ -18,6 +17,7 @@ def sas_train(model, dataset, sampler, **kwargs):
         batch_size = kwargs.get("batch_size", 128)
         lr = kwargs.get("learning_rate", 0.001)
         val_epoch = kwargs.get("val_epoch", 5)
+        val_target_user_n =kwargs.get("val_target_user_n",1000)
 
         num_steps = int(len(dataset.user_train) / batch_size)
 
@@ -80,17 +80,17 @@ def sas_train(model, dataset, sampler, **kwargs):
 
             if epoch % val_epoch == 0:                
                 print("Evaluating...")
-                t_test = evaluate(model,dataset)
+                t_test = sas_evaluate(model,dataset,target_user_n=val_target_user_n)
                 print(
                     f"epoch: {epoch}, time: {T},  test (NDCG@10: {t_test[0]}, HR@10: {t_test[1]})"
                 )
 
-def sas_evaluate(model_, dataset, target_user_n=1000, target_item_n=-1):
+def sas_evaluate(model_, dataset, target_user_n=1000, target_item_n=-1, rank_threshold=10):
         """
         Evaluation on the test users (users with at least 3 items)
 
         <kwargs>
-        model_ | dataset: SASRecDataSet 객체 | target_user_n: evaluate할 user 수 | target_item_n=
+        model_ | dataset: SASRecDataSet 객체 | target_user_n: evaluate할 user 수 | target_item_n: 추가 예정
         """
         usernum = dataset.usernum
         itemnum = dataset.itemnum
@@ -122,7 +122,7 @@ def sas_evaluate(model_, dataset, target_user_n=1000, target_item_n=-1):
                 idx -= 1
                 if idx == -1:
                     break
-            rated = set(train[u])
+            rated = set(train[u]).union(set(valid[u]))
             # print('rated', rated)
             rated.add(0)
             # print('rated2', rated)
@@ -140,7 +140,28 @@ def sas_evaluate(model_, dataset, target_user_n=1000, target_item_n=-1):
             item_idx=item_idx+(list(set(item_num).difference(exclude_set)))
             '''
             exclude_set = rated.union(set(item_idx))
-            item_idx=item_idx+list(set(range(1,itemnum+1)).difference(exclude_set))+[0 for _ in range(0,len(exclude_set)-2)]
+
+            if (target_item_n == -1):
+              item_idx=item_idx+list(set(range(1,itemnum+1)).difference(exclude_set))
+
+            
+            elif type(target_item_n)==int:
+              for _ in range(target_item_n):
+                t = np.random.randint(1, itemnum + 1)
+                while t in exclude_set:
+                    t = np.random.randint(1, itemnum + 1)
+                item_idx.append(t)
+            
+            elif type(target_item_n)==float:
+              for _ in range(round(itemnum*target_item_n)):
+                t = np.random.randint(1, itemnum + 1)
+                while t in exclude_set:
+                    t = np.random.randint(1, itemnum + 1)
+                item_idx.append(t)
+
+            else:
+              raise
+            
             
             inputs = {}
             inputs["user"] = np.expand_dims(np.array([u]), axis=-1)
@@ -149,7 +170,7 @@ def sas_evaluate(model_, dataset, target_user_n=1000, target_item_n=-1):
             # print(inputs)
 
             # inverse to get descending sort
-            predictions = -1.0 * model_.predict(inputs)
+            predictions = -1.0 * sas_predict(model_,inputs, len(item_idx)-1)
             predictions = np.array(predictions)
             predictions = predictions[0]
             # print('predictions:', predictions)
@@ -160,32 +181,46 @@ def sas_evaluate(model_, dataset, target_user_n=1000, target_item_n=-1):
 
             valid_user += 1
 
-            if rank < 10:
+            if rank < rank_threshold:
                 NDCG += 1 / np.log2(rank + 2)
                 HT += 1
 
         return NDCG / valid_user, HT / valid_user
 
-def save_sasrec_model(model,path, exp_name='sas_experiment'):
-  model.save_weights(path+exp_name+'_weights') # save trained weights
-  arg_list = ['item_num','seq_max_len','num_blocks','embedding_dim','attention_dim','attention_num_heads','dropout_rate','conv_dims','l2_reg','num_neg_test']
-  dict_to_save = {a: model.__dict__[a] for a in arg_list}
-  with open(path+exp_name+'_model_args','wb') as f:
-    pickle.dump(dict_to_save, f)
+def sas_predict(model_, inputs,neg_cand_n):
+        """Returns the logits for the test items.
 
-def load_sasrec_model(path, exp_name='sas_experiment'):
-  with open(path+exp_name+'_model_args','rb') as f:
-    arg_dict = pickle.load(f)
-  model = SASREC(item_num=arg_dict['item_num'],
-                   seq_max_len=arg_dict['seq_max_len'],
-                   num_blocks=arg_dict['num_blocks'],
-                   embedding_dim=arg_dict['embedding_dim'],
-                   attention_dim=arg_dict['attention_dim'],
-                   attention_num_heads=arg_dict['attention_num_heads'],
-                   dropout_rate=arg_dict['dropout_rate'],
-                   conv_dims = arg_dict['conv_dims'],
-                   l2_reg=arg_dict['l2_reg'],
-                   num_neg_test=arg_dict['num_neg_test'],
-    )
-  model.load_weights(path+exp_name+'_weights')
-  return model
+        Args:
+            inputs (tf.Tensor): Input tensor.
+
+        Returns:
+             tf.Tensor: Output tensor.
+        """
+        training = False
+        input_seq = inputs["input_seq"]
+        candidate = inputs["candidate"]
+
+        mask = tf.expand_dims(tf.cast(tf.not_equal(input_seq, 0), tf.float32), -1)
+        seq_embeddings, positional_embeddings = model_.embedding(input_seq)
+        seq_embeddings += positional_embeddings
+        # seq_embeddings = model_.dropout_layer(seq_embeddings)
+        seq_embeddings *= mask
+        seq_attention = seq_embeddings
+        seq_attention = model_.encoder(seq_attention, training, mask)
+        seq_attention = model_.layer_normalization(seq_attention)  # (b, s, d)
+        seq_emb = tf.reshape(
+            seq_attention,
+            [tf.shape(input_seq)[0] * model_.seq_max_len, model_.embedding_dim],
+        )  # (b*s, d)
+        candidate_emb = model_.item_embedding_layer(candidate)  # (b, s, d)
+        candidate_emb = tf.transpose(candidate_emb, perm=[0, 2, 1])  # (b, d, s)
+
+        test_logits = tf.matmul(seq_emb, candidate_emb)
+        # (200, 100) * (1, 101, 100)'
+
+        test_logits = tf.reshape(
+            test_logits,
+            [tf.shape(input_seq)[0], model_.seq_max_len, 1+neg_cand_n],
+        )  # (1, 50, 1+neg_can)
+        test_logits = test_logits[:, -1, :]  # (1, 101)
+        return test_logits
