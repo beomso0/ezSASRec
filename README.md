@@ -24,7 +24,12 @@ sas_evaluate(test_model,data, target_user_n=1000, target_item_n=-1,rank_threshol
 ```python
 sas_train(test_model,data,sampler,num_epochs=num_epochs, batch_size=batch_size, learning_rate=lr, val_epoch=5, target_user_n=10000, target_item_n=-1)
 ```
-
+### c. sas_predict
+- added parameters
+  - neg_cand_n: test target 외에 추가된 neg_candidates의 수.
+    -  행렬 연산이 끝난 뒤에 output(test_logits)을 reshape할 때 필요함
+    - 학습 및 평가 시에는 sas_evaluate 함수에서 자동으로 값을 전달
+    - 최종 배포 시에는 ```neg_cand_n=0```으로 지정
 
 ## 2. custom_util
 - save and load SASRec model
@@ -43,7 +48,7 @@ save_sasrec_model(test_model, path, exp_name='save_test')
   - path: 저장할 경로
   - exp_name: 실험(모델) 이름을 suffix로 추가
 
-### a. load_sasrec_model
+### b. load_sasrec_model
 - save_sasrec_model로 저장한 SASRec 객체의 weight와 args 파일을 불러와서 SASRec 객체 생성
 </br>
 - usage
