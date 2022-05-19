@@ -19,7 +19,8 @@ sas_evaluate(test_model,data, target_user_n=1000, target_item_n=-1,rank_threshol
   - target_user_n=1000 : for sas_evaluate
   - target_item_n=-1: for sas_evaluate
     </br>
-  - usage
+  
+- usage
 
 ```python
 sas_train(test_model,data,sampler,num_epochs=num_epochs, batch_size=batch_size, learning_rate=lr, val_epoch=5, target_user_n=10000, target_item_n=-1)
@@ -56,8 +57,6 @@ save_sasrec_model(test_model, path, exp_name='save_test')
 ```python
 loaded_model = load_sasrec_model(path, exp_name='save_test')
 ```
-
-  </br>
 
 - parameters
   - path: 파일**들**이 저장된 경로
