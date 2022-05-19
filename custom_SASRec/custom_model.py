@@ -18,6 +18,7 @@ def sas_train(model, dataset, sampler, **kwargs):
         lr = kwargs.get("learning_rate", 0.001)
         val_epoch = kwargs.get("val_epoch", 5)
         val_target_user_n =kwargs.get("val_target_user_n",1000)
+        target_item_n =kwargs.get("target_item_n",-1)
 
         num_steps = int(len(dataset.user_train) / batch_size)
 
@@ -80,7 +81,7 @@ def sas_train(model, dataset, sampler, **kwargs):
 
             if epoch % val_epoch == 0:                
                 print("Evaluating...")
-                t_test = sas_evaluate(model,dataset,target_user_n=val_target_user_n)
+                t_test = sas_evaluate(model,dataset,target_user_n=val_target_user_n,target_item_n=target_item_n)
                 print(
                     f"epoch: {epoch}, time: {T},  test (NDCG@10: {t_test[0]}, HR@10: {t_test[1]})"
                 )
