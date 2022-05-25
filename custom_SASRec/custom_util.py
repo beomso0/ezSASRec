@@ -15,7 +15,7 @@ def save_sasrec_model(model,path, exp_name='sas_experiment',**kwargs):
   dict_to_save = {a: model.__dict__[a] for a in arg_list}
   with open(path+exp_name+'/'+exp_name+'_model_args','wb') as f:
     pickle.dump(dict_to_save, f)
-  with open(path+exp_name+'/'+exp_name+'_train_log.txt','a') as f:
+  with open(path+exp_name+'/'+exp_name+'_model_args.txt','a') as f:
     f.writelines(f'Model args: {dict_to_save}')
   with open(path+exp_name+'/'+exp_name+'_train_log.txt','a') as f:
     f.writelines(f'Best HR@10 score: {score}\n')
