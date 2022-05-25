@@ -162,7 +162,6 @@ def sas_evaluate(model_, dataset, target_user_n=1000, target_item_n=-1, rank_thr
 
             if (target_item_n == -1):
               item_idx=item_idx+list(set(range(1,itemnum+1)).difference(rated))
-
             
             elif type(target_item_n)==int:
               for _ in range(target_item_n):
@@ -179,8 +178,7 @@ def sas_evaluate(model_, dataset, target_user_n=1000, target_item_n=-1, rank_thr
                 item_idx.append(t)
 
             else:
-              raise
-            
+              raise            
             
             inputs = {}
             inputs["user"] = np.expand_dims(np.array([u]), axis=-1)
@@ -206,40 +204,104 @@ def sas_evaluate(model_, dataset, target_user_n=1000, target_item_n=-1, rank_thr
 
         return NDCG / valid_user, HT / valid_user
 
+def sas_get_prediction(model_, dataset, user_map_dict,user_id_list, target_item_n=-1,top_n=10,exclude_purchased=True,is_test=False):
+  all = dataset.User
+  itemnum = dataset.itemnum
+  users = [user_map_dict[u] for u in user_id_list]
+  inv_user_map = {v: k for k, v in user_map_dict.items()}
+  return_dict={}
+
+  for u in tqdm(users):
+    seq = np.zeros([model_.seq_max_len], dtype=np.int32)
+    idx = model_.seq_max_len - 1
+
+    list_to_seq = all[u] if not is_test else all[u][:-1]
+    for i in reversed(list_to_seq):
+      seq[idx] = i
+      idx -= 1
+      if idx == -1:
+        break
+
+    if exclude_purchased: 
+      rated = set(all[u]) 
+    else: 
+      rated = set()
+    
+    # make empty candidate list
+    item_idx=[]
+
+    if (target_item_n == -1):
+      item_idx=item_idx+list(set(range(1,itemnum+1)).difference(rated))
+    
+    elif type(target_item_n)==int:
+      for _ in range(target_item_n):
+        t = np.random.randint(1, itemnum + 1)
+        while t in rated:
+            t = np.random.randint(1, itemnum + 1)
+        item_idx.append(t)
+    
+    elif type(target_item_n)==float:
+      for _ in range(round(itemnum*target_item_n)):
+        t = np.random.randint(1, itemnum + 1)
+        while t in rated:
+            t = np.random.randint(1, itemnum + 1)
+        item_idx.append(t)
+
+    else:
+      raise
+    
+    inputs = {}
+    inputs["user"] = np.expand_dims(np.array([u]), axis=-1)
+    inputs["input_seq"] = np.array([seq])
+    inputs["candidate"] = np.array([item_idx])
+
+    predictions = sas_predict(model_,inputs, len(item_idx)-1)
+    predictions = np.array(predictions)
+    predictions = predictions[0]
+
+    pred_dict = {v : predictions[i] for i,v in enumerate(item_idx)}
+    pred_dict = sorted(pred_dict.items(), key = lambda item: item[1], reverse = True)
+    top_10_list = pred_dict[:10]
+
+    return_dict[inv_user_map[u]] = top_10_list
+
+  return return_dict
+
 def sas_predict(model_, inputs,neg_cand_n):
-        """Returns the logits for the test items.
+    """Returns the logits for the test items.
 
-        Args:
-            inputs (tf.Tensor): Input tensor.
+    Args:
+        inputs (tf.Tensor): Input tensor.
 
-        Returns:
-             tf.Tensor: Output tensor.
-        """
-        training = False
-        input_seq = inputs["input_seq"]
-        candidate = inputs["candidate"]
+    Returns:
+            tf.Tensor: Output tensor.
+    """
+    training = False
+    input_seq = inputs["input_seq"]
+    candidate = inputs["candidate"]
 
-        mask = tf.expand_dims(tf.cast(tf.not_equal(input_seq, 0), tf.float32), -1)
-        seq_embeddings, positional_embeddings = model_.embedding(input_seq)
-        seq_embeddings += positional_embeddings
-        # seq_embeddings = model_.dropout_layer(seq_embeddings)
-        seq_embeddings *= mask
-        seq_attention = seq_embeddings
-        seq_attention = model_.encoder(seq_attention, training, mask)
-        seq_attention = model_.layer_normalization(seq_attention)  # (b, s, d)
-        seq_emb = tf.reshape(
-            seq_attention,
-            [tf.shape(input_seq)[0] * model_.seq_max_len, model_.embedding_dim],
-        )  # (b*s, d)
-        candidate_emb = model_.item_embedding_layer(candidate)  # (b, s, d)
-        candidate_emb = tf.transpose(candidate_emb, perm=[0, 2, 1])  # (b, d, s)
+    mask = tf.expand_dims(tf.cast(tf.not_equal(input_seq, 0), tf.float32), -1)
+    seq_embeddings, positional_embeddings = model_.embedding(input_seq)
+    seq_embeddings += positional_embeddings
+    # seq_embeddings = model_.dropout_layer(seq_embeddings)
+    seq_embeddings *= mask
+    seq_attention = seq_embeddings
+    seq_attention = model_.encoder(seq_attention, training, mask)
+    seq_attention = model_.layer_normalization(seq_attention)  # (b, s, d)
+    seq_emb = tf.reshape(
+        seq_attention,
+        [tf.shape(input_seq)[0] * model_.seq_max_len, model_.embedding_dim],
+    )  # (b*s, d)
+    candidate_emb = model_.item_embedding_layer(candidate)  # (b, s, d)
+    candidate_emb = tf.transpose(candidate_emb, perm=[0, 2, 1])  # (b, d, s)
 
-        test_logits = tf.matmul(seq_emb, candidate_emb)
-        # (200, 100) * (1, 101, 100)'
+    test_logits = tf.matmul(seq_emb, candidate_emb)
+    # (200, 100) * (1, 101, 100)'
 
-        test_logits = tf.reshape(
-            test_logits,
-            [tf.shape(input_seq)[0], model_.seq_max_len, 1+neg_cand_n],
-        )  # (1, 50, 1+neg_can)
-        test_logits = test_logits[:, -1, :]  # (1, 101)
-        return test_logits
+    test_logits = tf.reshape(
+        test_logits,
+        [tf.shape(input_seq)[0], model_.seq_max_len, 1+neg_cand_n],
+    )  # (1, 50, 1+neg_can)
+    test_logits = test_logits[:, -1, :]  # (1, 101)
+    return test_logits
+
