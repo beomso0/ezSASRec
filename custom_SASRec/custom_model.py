@@ -103,7 +103,7 @@ def sas_train(model, dataset, sampler, **kwargs):
                 if auto_save:
                     if t_test[1] > best_score:
                         best_score = t_test[1]
-                        save_sasrec_model(model,path,exp_name)
+                        save_sasrec_model(model,path,exp_name+f'HR@10={t_test[1]}')
                         print('best score model updated and saved')
                     else:
                         pass
