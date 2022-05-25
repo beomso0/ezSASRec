@@ -1,7 +1,7 @@
 from matplotlib.pyplot import autoscale
 from recommenders.models.sasrec.model import SASREC
 from recommenders.utils.timer import Timer
-from custom_util import save_sasrec_model
+from .custom_util import save_sasrec_model
 import numpy as np
 from tqdm import tqdm
 import random
