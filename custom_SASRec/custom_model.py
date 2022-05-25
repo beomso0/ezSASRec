@@ -108,9 +108,7 @@ def sas_train(model, dataset, sampler, **kwargs):
                     else:
                         pass
                 else:
-                    pass
-
-                
+                    pass                
 
 def sas_evaluate(model_, dataset, target_user_n=1000, target_item_n=-1, rank_threshold=10,is_val=False):
 
