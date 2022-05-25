@@ -1,5 +1,7 @@
+from matplotlib.pyplot import autoscale
 from recommenders.models.sasrec.model import SASREC
 from recommenders.utils.timer import Timer
+from custom_util import save_sasrec_model
 import numpy as np
 from tqdm import tqdm
 import random
@@ -11,14 +13,27 @@ def sas_train(model, dataset, sampler, **kwargs):
         evaluation on the validation and test dataset
         
         <kwargs>
-        num_epochs | batch_size | learning_rate | val_epoch : 몇 epoch마다 validation 진행할지
+        num_epochs
+        batch_size
+        learning_rate
+        val_epoch : 몇 epoch마다 validation 진행할지
+        val_target_user_n : validation 
+        target_item_n
+        auto_save
+        path
+        exp_name
+        best_score
         """
         num_epochs = kwargs.get("num_epochs", 10)
         batch_size = kwargs.get("batch_size", 128)
         lr = kwargs.get("learning_rate", 0.001)
         val_epoch = kwargs.get("val_epoch", 5)
         val_target_user_n =kwargs.get("val_target_user_n",1000)
-        target_item_n =kwargs.get("target_item_n",-1)
+        target_item_n = kwargs.get("target_item_n",-1)
+        auto_save = kwargs.get("auto_save",True)
+        path = kwargs.get("path",'./')
+        exp_name = kwargs.get("exp_name",'SASRec_exp')
+        best_score = 0
 
         num_steps = int(len(dataset.user_train) / batch_size)
 
@@ -81,20 +96,32 @@ def sas_train(model, dataset, sampler, **kwargs):
 
             if epoch % val_epoch == 0:                
                 print("Evaluating...")
-                t_test = sas_evaluate(model,dataset,target_user_n=val_target_user_n,target_item_n=target_item_n)
+                t_test = sas_evaluate(model,dataset,target_user_n=val_target_user_n,target_item_n=target_item_n,is_val=True)
                 print(
                     f"epoch: {epoch}, time: {T},  test (NDCG@10: {t_test[0]}, HR@10: {t_test[1]})"
                 )
 
-def sas_evaluate(model_, dataset, target_user_n=1000, target_item_n=-1, rank_threshold=10):
+                if auto_save:
+                    if t_test[1] > best_score:
+                        save_sasrec_model(model,path,exp_name)
+                    else:
+                        pass
+                else:
+                    pass
+
+                
+
+def sas_evaluate(model_, dataset, target_user_n=1000, target_item_n=-1, rank_threshold=10,is_val=False):
+
         """
         Evaluation on the test users (users with at least 3 items)
 
         <kwargs>
-        model_ | dataset: SASRecDataSet 객체 | target_user_n: evaluate할 user 수 | target_item_n: 추가 예정
+        model_ | dataset: SASRecDataSet 객체 | target_user_n: evaluate할 user 수 | target_item_n
         """
         usernum = dataset.usernum
         itemnum = dataset.itemnum
+        all = dataset.User
         train = dataset.user_train  # removing deepcopy
         valid = dataset.user_valid
         test = dataset.user_test
@@ -116,47 +143,37 @@ def sas_evaluate(model_, dataset, target_user_n=1000, target_item_n=-1, rank_thr
 
             seq = np.zeros([model_.seq_max_len], dtype=np.int32)
             idx = model_.seq_max_len - 1
-            seq[idx] = valid[u][0]
-            idx -= 1
+
+            if is_val:                
+                item_idx = [valid[u][0]]
+            else:
+                seq[idx] = valid[u][0]
+                idx -= 1
+                item_idx = [test[u][0]]
+
             for i in reversed(train[u]):
                 seq[idx] = i
                 idx -= 1
                 if idx == -1:
                     break
-            rated = set(train[u]).union(set(valid[u]))
-            # print('rated', rated)
-            rated.add(0)
-            # print('rated2', rated)
-            item_idx = [test[u][0]]
-            # for _ in range(model_.num_neg_test):
-            #     t = np.random.randint(1, itemnum + 1)
-            #     while t in rated:
-            #         t = np.random.randint(1, itemnum + 1)
-            #     item_idx.append(t)
-            '''
-            item_num = list(range(1,11))
-            rated = set([1,2,3,4])
-            item_idx=[5]
-            exclude_set = rated.union(set(item_idx))
-            item_idx=item_idx+(list(set(item_num).difference(exclude_set)))
-            '''
-            exclude_set = rated.union(set(item_idx))
+
+            rated = set(all[u])
 
             if (target_item_n == -1):
-              item_idx=item_idx+list(set(range(1,itemnum+1)).difference(exclude_set))
+              item_idx=item_idx+list(set(range(1,itemnum+1)).difference(rated))
 
             
             elif type(target_item_n)==int:
               for _ in range(target_item_n):
                 t = np.random.randint(1, itemnum + 1)
-                while t in exclude_set:
+                while t in rated:
                     t = np.random.randint(1, itemnum + 1)
                 item_idx.append(t)
             
             elif type(target_item_n)==float:
               for _ in range(round(itemnum*target_item_n)):
                 t = np.random.randint(1, itemnum + 1)
-                while t in exclude_set:
+                while t in rated:
                     t = np.random.randint(1, itemnum + 1)
                 item_idx.append(t)
 
