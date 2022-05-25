@@ -22,7 +22,6 @@ def sas_train(model, dataset, sampler, **kwargs):
         auto_save
         path
         exp_name
-        best_score
         """
         num_epochs = kwargs.get("num_epochs", 10)
         batch_size = kwargs.get("batch_size", 128)
@@ -104,6 +103,7 @@ def sas_train(model, dataset, sampler, **kwargs):
                 if auto_save:
                     if t_test[1] > best_score:
                         save_sasrec_model(model,path,exp_name)
+                        print('best score model updated and saved')
                     else:
                         pass
                 else:
