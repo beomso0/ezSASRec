@@ -7,7 +7,6 @@ import pickle
 import os
 from .util import save_sasrec_model 
 import tensorflow as tf
-from recommenders.utils.timer import Timer
 
 
 class MultiHeadAttention(tf.keras.layers.Layer):
@@ -706,8 +705,7 @@ class SASREC(tf.keras.Model):
         for epoch in range(1, num_epochs + 1):
 
             print(f'epoch {epoch} / {num_epochs} started---------------------')
-            t0 = Timer()
-            t0.start()
+            
             step_loss = []
             train_loss.reset_states()
             for step in tqdm(
@@ -725,7 +723,7 @@ class SASREC(tf.keras.Model):
                 print("Evaluating...")
                 t_test = self.evaluate(self,dataset,target_user_n=val_target_user_n,target_item_n=target_item_n,is_val=True)
                 print(
-                    f"epoch: {epoch}, time(train and evaluate model during an epoch): {t0},  test (NDCG@10: {t_test[0]}, HR@10: {t_test[1]})"
+                    f"epoch: {epoch}, test (NDCG@10: {t_test[0]}, HR@10: {t_test[1]})"
                 )
 
                 if auto_save:
