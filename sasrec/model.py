@@ -703,7 +703,7 @@ class SASREC(tf.keras.Model):
 
         for epoch in range(1, num_epochs + 1):
 
-            print(f'epoch {epoch} / {num_epochs} started---------------------')
+            print(f'epoch {epoch} / {num_epochs} -----------------------------')
             
             step_loss = []
             train_loss.reset_states()
@@ -814,7 +814,7 @@ class SASREC(tf.keras.Model):
             # print(inputs)
 
             # inverse to get descending sort
-            predictions = -1.0 * self.predict(self,inputs, len(item_idx)-1)
+            predictions = -1.0 * self.predict(inputs, len(item_idx)-1)
             predictions = np.array(predictions)
             predictions = predictions[0]
             # print('predictions:', predictions)
