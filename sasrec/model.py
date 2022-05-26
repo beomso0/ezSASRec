@@ -720,7 +720,7 @@ class SASREC(tf.keras.Model):
 
             if epoch % val_epoch == 0:                
                 print("Evaluating...")
-                t_test = self.evaluate(self,dataset,target_user_n=val_target_user_n,target_item_n=target_item_n,is_val=True)
+                t_test = self.evaluate(dataset,target_user_n=val_target_user_n,target_item_n=target_item_n,is_val=True)
                 print(
                     f"epoch: {epoch}, test (NDCG@10: {t_test[0]}, HR@10: {t_test[1]})"
                 )
@@ -728,7 +728,7 @@ class SASREC(tf.keras.Model):
                 if auto_save:
                     if t_test[1] > best_score:
                         best_score = t_test[1]
-                        self.save(self,path,exp_name,save_info={'score':t_test[1],'epoch':epoch})
+                        self.save(path,exp_name,save_info={'score':t_test[1],'epoch':epoch})
                         print('best score model updated and saved')
                     else:
                         pass
