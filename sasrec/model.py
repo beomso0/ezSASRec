@@ -882,7 +882,7 @@ class SASREC(tf.keras.Model):
             inputs["input_seq"] = np.array([seq])
             inputs["candidate"] = np.array([item_idx])
 
-            predictions = self.predict(self,inputs, len(item_idx)-1)
+            predictions = self.predict(inputs, len(item_idx)-1)
             predictions = np.array(predictions)
             predictions = predictions[0]
 
