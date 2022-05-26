@@ -5,7 +5,6 @@ import numpy as np
 from tqdm import tqdm
 import pickle
 import os
-from .util import save_sasrec_model 
 import tensorflow as tf
 
 
@@ -729,7 +728,7 @@ class SASREC(tf.keras.Model):
                 if auto_save:
                     if t_test[1] > best_score:
                         best_score = t_test[1]
-                        save_sasrec_model(self,path,exp_name,save_info={'score':t_test[1],'epoch':epoch})
+                        self.save(self,path,exp_name,save_info={'score':t_test[1],'epoch':epoch})
                         print('best score model updated and saved')
                     else:
                         pass
