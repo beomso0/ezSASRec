@@ -16,11 +16,11 @@ def sas_train(model, dataset, sampler, **kwargs):
         num_epochs
         batch_size
         learning_rate
-        val_epoch : 몇 epoch마다 validation 진행할지
+        val_epoch : epoch interval for validation
         val_target_user_n : validation 
-        target_item_n
-        auto_save
-        path
+        target_item_n : num of neg_candidate
+        auto_save : True or False
+        path : path where the model will be saved
         exp_name
         """
         num_epochs = kwargs.get("num_epochs", 10)
@@ -259,9 +259,9 @@ def sas_get_prediction(model_, dataset, user_map_dict,user_id_list, target_item_
 
     pred_dict = {v : predictions[i] for i,v in enumerate(item_idx)}
     pred_dict = sorted(pred_dict.items(), key = lambda item: item[1], reverse = True)
-    top_10_list = pred_dict[:10]
+    top_list = pred_dict[:top_n]
 
-    return_dict[inv_user_map[u]] = top_10_list
+    return_dict[inv_user_map[u]] = top_list
 
   return return_dict
 
