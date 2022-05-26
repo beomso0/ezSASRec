@@ -735,13 +735,18 @@ class SASREC(tf.keras.Model):
                 else:
                     pass    
 
-    def evaluate(self, dataset,target_user_n=1000, target_item_n=-1, rank_threshold=10,is_val=False):
+    def evaluate(self, dataset,**kwargs):
         """
         Evaluation on the test users (users with at least 3 items)
 
         <kwargs>
         model_ | dataset: SASRecDataSet 객체 | target_user_n: evaluate할 user 수 | target_item_n
         """
+        target_user_n = kwargs.get("target_user_n", 1000)
+        target_item_n = kwargs.get("target_item_n", -1)
+        rank_threshold = kwargs.get("rank_threshold", 10)
+        is_val = kwargs.get("is_val", False)
+
         usernum = dataset.usernum
         itemnum = dataset.itemnum
         all = dataset.User
