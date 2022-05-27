@@ -1,6 +1,6 @@
-# customized **SASRec** (based on microsoft recommenders)
+# **SASRec**
 
-## 1. custom_model
+
 train and evaluate SASRec model
 ### a. sas_evaluate
 

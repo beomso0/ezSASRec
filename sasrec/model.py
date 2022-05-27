@@ -822,7 +822,6 @@ class SASREC(tf.keras.Model):
             rank = predictions.argsort().argsort()[0]
             # print('rank:', rank)
 
-
             valid_user += 1
 
             if rank < rank_threshold:
