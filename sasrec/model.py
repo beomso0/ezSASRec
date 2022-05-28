@@ -705,6 +705,7 @@ class SASREC(tf.keras.Model):
 
             print(f'epoch {epoch} / {num_epochs} -----------------------------')
             
+            self.epoch = epoch
             step_loss = []
             train_loss.reset_states()
             for step in tqdm(
@@ -724,18 +725,12 @@ class SASREC(tf.keras.Model):
                 print(
                     f"epoch: {epoch}, test (NDCG@10: {t_test[0]}, HR@10: {t_test[1]})"
                 )
-
+                
+                if t_test[1] > self.best_score:
+                    self.best_score = t_test[1]
                 if auto_save:
-                    if t_test[1] > self.best_score:
-                        self.best_score = t_test[1]
-                        self.save(path,exp_name,save_info={'score':self.best_score,'epoch':self.epoch})
-                        print('best score model updated and saved')
-                    else:
-                        pass
-                else:
-                    pass 
-
-            self.epoch+=1
+                    self.save(path,exp_name,save_info={'score':self.best_score,'epoch':self.epoch})
+                    print('best score model updated and saved')
 
     def evaluate(self, dataset,**kwargs):
         """
