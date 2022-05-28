@@ -391,6 +391,9 @@ class SASREC(tf.keras.Model):
             l2_reg (float): Coefficient of the L2 regularization.
             num_neg_test (int): Number of negative examples used in testing.
         """
+        self.epoch = 0
+        self.best_score=0
+        
         super(SASREC, self).__init__()
 
         self.item_num = kwargs.get("item_num", None)
@@ -403,8 +406,6 @@ class SASREC(tf.keras.Model):
         self.dropout_rate = kwargs.get("dropout_rate", 0.5)
         self.l2_reg = kwargs.get("l2_reg", 0.0)
         self.num_neg_test = kwargs.get("num_neg_test", 100)
-        self.epoch = 0
-        self.best_score=0
 
         self.item_embedding_layer = tf.keras.layers.Embedding(
             self.item_num + 1,
