@@ -393,7 +393,7 @@ class SASREC(tf.keras.Model):
         """
         self.epoch = 0
         self.best_score=0
-        
+
         super(SASREC, self).__init__()
 
         self.item_num = kwargs.get("item_num", None)
@@ -730,7 +730,7 @@ class SASREC(tf.keras.Model):
                 if t_test[1] > self.best_score:
                     self.best_score = t_test[1]
                 if auto_save:
-                    self.save(path,exp_name,save_info={'score':self.best_score,'epoch':self.epoch})
+                    self.save(path,exp_name)
                     print('best score model updated and saved')
 
     def evaluate(self, dataset,**kwargs):
