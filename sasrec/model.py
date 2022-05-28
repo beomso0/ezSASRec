@@ -403,6 +403,8 @@ class SASREC(tf.keras.Model):
         self.dropout_rate = kwargs.get("dropout_rate", 0.5)
         self.l2_reg = kwargs.get("l2_reg", 0.0)
         self.num_neg_test = kwargs.get("num_neg_test", 100)
+        self.epoch = 0
+        self.best_score=0
 
         self.item_embedding_layer = tf.keras.layers.Embedding(
             self.item_num + 1,
@@ -658,8 +660,6 @@ class SASREC(tf.keras.Model):
         auto_save = kwargs.get("auto_save",True)
         path = kwargs.get("path",'./')
         exp_name = kwargs.get("exp_name",'SASRec_exp')
-        best_score = 0
-
         
         num_steps = int(len(dataset.user_train) / batch_size)
 
@@ -726,14 +726,16 @@ class SASREC(tf.keras.Model):
                 )
 
                 if auto_save:
-                    if t_test[1] > best_score:
-                        best_score = t_test[1]
-                        self.save(path,exp_name,save_info={'score':t_test[1],'epoch':epoch})
+                    if t_test[1] > self.best_score:
+                        self.best_score = t_test[1]
+                        self.save(path,exp_name,save_info={'score':self.best_score,'epoch':self.epoch})
                         print('best score model updated and saved')
                     else:
                         pass
                 else:
-                    pass    
+                    pass 
+
+            self.epoch+=1
 
     def evaluate(self, dataset,**kwargs):
         """
@@ -893,12 +895,11 @@ class SASREC(tf.keras.Model):
 
         return return_dict
     
-    def save(self,path, exp_name='sas_experiment',**kwargs):
+    def save(self,path, exp_name='sas_experiment'):
 
         # score suffix
-        save_info = kwargs.get("save_info")
-        score = save_info['score']
-        epoch = save_info['epoch']
+        score = self.best_score
+        epoch = self.epoch
         
         # make dir
         if not os.path.exists(path+exp_name):
