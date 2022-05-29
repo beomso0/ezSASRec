@@ -897,10 +897,10 @@ class SASREC(tf.keras.Model):
         users = [user_map_dict[u] for u in user_id_list]
         items = [item_map_dict[i] for i in item_list]
         inv_user_map = {v: k for k, v in user_map_dict.items()}
-        inv_item_map = {v: k for k, v in item_map_dict.items()}
-        return_dict={}
+        inv_item_map = {v: k for k, v in item_map_dict.items()}        
+        score_dict = {i:[] for i in item_list}
         
-        for u in tqdm(users,unit='User',desc='Getting Scores for each user ...'):
+        for u in tqdm(users,unit=' User',desc='Getting Scores for each user ...'):
                 
             seq = np.zeros([self.seq_max_len], dtype=np.int32)
             idx = self.seq_max_len - 1
@@ -921,11 +921,20 @@ class SASREC(tf.keras.Model):
             predictions = np.array(predictions)
             predictions = predictions[0]
 
-            pred_dict = {inv_item_map[v] : predictions[i] for i,v in enumerate(items)}
+            # pred_dict = {inv_item_map[v] : predictions[i] for i,v in enumerate(items)}
 
-            return_dict[inv_user_map[u]] = pred_dict
+            for i,v in enumerate(item_list):
+                score_dict[v].append(predictions[i])                      
 
-        return return_dict
+        return_df = pd.DataFrame({
+            'user_id':users,
+            'item_id':items
+        })
+        
+        for k in score_dict:
+            return_df[k] = score_dict[k]
+
+        return return_df
     
     def save(self,path, exp_name='sas_experiment'):
 
