@@ -8,7 +8,7 @@ with open("README.md", "r") as fh:
 
 setuptools.setup(
   name="custom_SASRec", 
-  version="0.3.3",
+  version="0.3.4",
   author="Beomso0",
   author_email="univ3352@gmail.com",
   description="customized SASRec",
@@ -22,5 +22,5 @@ setuptools.setup(
     "Operating System :: OS Independent",
   ],
   python_requires='>=3.7',
-  # install_requires=requirements,
+  install_requires=requirements,
 )
