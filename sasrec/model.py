@@ -892,7 +892,7 @@ class SASREC(tf.keras.Model):
 
         return return_dict
     
-    def get_user_item_score(self, dataset, user_map_dict,item_map_dict,user_id_list, item_list):
+    def get_user_item_score(self, dataset, user_map_dict,item_map_dict,user_id_list, item_list,is_test=False):
         all = dataset.User
         users = [user_map_dict[u] for u in user_id_list]
         items = [item_map_dict[i] for i in item_list]
@@ -905,7 +905,7 @@ class SASREC(tf.keras.Model):
             seq = np.zeros([self.seq_max_len], dtype=np.int32)
             idx = self.seq_max_len - 1
 
-            list_to_seq = all[u]
+            list_to_seq = all[u] if not is_test else all[u][:-1]
             for i in reversed(list_to_seq):
                 seq[idx] = i
                 idx -= 1
