@@ -896,8 +896,8 @@ class SASREC(tf.keras.Model):
         all = dataset.User
         users = [user_map_dict[u] for u in user_id_list]
         items = [item_map_dict[i] for i in item_list]
-        inv_user_map = {v: k for k, v in user_map_dict.items()}
-        inv_item_map = {v: k for k, v in item_map_dict.items()}        
+        # inv_user_map = {v: k for k, v in user_map_dict.items()}
+        # inv_item_map = {v: k for k, v in item_map_dict.items()}        
         score_dict = {i:[] for i in item_list}
         
         for u in tqdm(users,unit=' User',desc='Getting Scores for each user ...'):
@@ -928,7 +928,6 @@ class SASREC(tf.keras.Model):
 
         return_df = pd.DataFrame({
             'user_id':users,
-            'item_id':items
         })
         
         for k in score_dict:
