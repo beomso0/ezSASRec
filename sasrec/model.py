@@ -2,6 +2,7 @@
 # Licensed under the MIT License.
 import random
 import numpy as np
+import pandas as pd
 from tqdm import tqdm
 import pickle
 import os
@@ -658,7 +659,7 @@ class SASREC(tf.keras.Model):
         val_epoch = kwargs.get("val_epoch", 5)
         val_target_user_n =kwargs.get("val_target_user_n",1000)
         target_item_n = kwargs.get("target_item_n",-1)
-        auto_save = kwargs.get("auto_save",True)
+        auto_save = kwargs.get("auto_save",False)
         path = kwargs.get("path",'./')
         exp_name = kwargs.get("exp_name",'SASRec_exp')
         
@@ -729,9 +730,9 @@ class SASREC(tf.keras.Model):
                 
                 if t_test[1] > self.best_score:
                     self.best_score = t_test[1]
-                if auto_save:
-                    self.save(path,exp_name)
-                    print('best score model updated and saved')
+                    if auto_save:
+                        self.save(path,exp_name)
+                        print('best score model updated and saved')
 
     def evaluate(self, dataset,**kwargs):
         """
@@ -843,8 +844,8 @@ class SASREC(tf.keras.Model):
             for i in reversed(list_to_seq):
                 seq[idx] = i
                 idx -= 1
-            if idx == -1:
-                break
+                if idx == -1:
+                    break
 
             if exclude_purchased: 
                 rated = set(all[u]) 
@@ -888,6 +889,41 @@ class SASREC(tf.keras.Model):
             top_list = pred_dict[:top_n]
 
             return_dict[inv_user_map[u]] = top_list
+
+        return return_dict
+    
+    def get_user_item_score(self, dataset, user_map_dict,item_map_dict,user_id_list, item_list):
+        all = dataset.User
+        users = [user_map_dict[u] for u in user_id_list]
+        items = [item_map_dict[i] for i in item_list]
+        inv_user_map = {v: k for k, v in user_map_dict.items()}
+        inv_item_map = {v: k for k, v in item_map_dict.items()}
+        return_dict={}
+        
+        for u in tqdm(users,unit='User',desc='Getting Scores for each user ...'):
+                
+            seq = np.zeros([self.seq_max_len], dtype=np.int32)
+            idx = self.seq_max_len - 1
+
+            list_to_seq = all[u]
+            for i in reversed(list_to_seq):
+                seq[idx] = i
+                idx -= 1
+                if idx == -1:
+                    break
+        
+            inputs = {}
+            inputs["user"] = np.expand_dims(np.array([u]), axis=-1)
+            inputs["input_seq"] = np.array([seq])
+            inputs["candidate"] = np.array([items])
+
+            predictions = self.predict(inputs, len(items)-1)
+            predictions = np.array(predictions)
+            predictions = predictions[0]
+
+            pred_dict = {inv_item_map[v] : predictions[i] for i,v in enumerate(items)}
+
+            return_dict[inv_user_map[u]] = pred_dict
 
         return return_dict
     
