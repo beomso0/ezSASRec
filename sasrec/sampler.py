@@ -1,6 +1,3 @@
-# Copyright (c) Microsoft Corporation. All rights reserved.
-# Licensed under the MIT License.
-# Original codes are from
 # https://github.com/kang205/SASRec/blob/master/sampler.py
 import numpy as np
 from multiprocessing import Process, Queue
