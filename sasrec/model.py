@@ -392,6 +392,7 @@ class SASREC(tf.keras.Model):
         """
         self.epoch = 0
         self.best_score=0
+        self.val_users = []
 
         super(SASREC, self).__init__()
 
@@ -754,14 +755,14 @@ class SASREC(tf.keras.Model):
         NDCG = 0.0
         HT = 0.0
         valid_user = 0.0
+        
+        if len(self.val_users) == 0:
+            if usernum > target_user_n:
+                self.val_users = random.sample(range(1, usernum + 1), target_user_n)
+            else:
+                self.val_users = range(1, usernum + 1)
 
-        if usernum > target_user_n:
-            users = random.sample(range(1, usernum + 1), target_user_n)
-        else:
-            users = range(1, usernum + 1)
-        # users = range(1,11)
-
-        for u in tqdm(users, ncols=70, leave=False, unit="b"):
+        for u in tqdm(self.val_users, ncols=70, leave=False, unit="b"):
 
             if len(train[u]) < 1 or len(test[u]) < 1:
                 continue
