@@ -390,11 +390,12 @@ class SASREC(tf.keras.Model):
             l2_reg (float): Coefficient of the L2 regularization.
             num_neg_test (int): Number of negative examples used in testing.
         """
+
+        super(SASREC, self).__init__()
+        
         self.epoch = 0
         self.best_score=0
         self.val_users = []
-
-        super(SASREC, self).__init__()
 
         self.item_num = kwargs.get("item_num", None)
         self.seq_max_len = kwargs.get("seq_max_len", 100)
