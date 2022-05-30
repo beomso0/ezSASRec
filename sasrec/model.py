@@ -392,7 +392,7 @@ class SASREC(tf.keras.Model):
         """
 
         super(SASREC, self).__init__()
-        
+
         self.epoch = 0
         self.best_score=0
         self.val_users = []
@@ -662,6 +662,7 @@ class SASREC(tf.keras.Model):
         auto_save = kwargs.get("auto_save",False)
         path = kwargs.get("path",'./')
         exp_name = kwargs.get("exp_name",'SASRec_exp')
+        progress_bar = kwargs.get("progress_bar",True)
         
         num_steps = int(len(dataset.user_train) / batch_size)
 
@@ -711,7 +712,7 @@ class SASREC(tf.keras.Model):
             step_loss = []
             train_loss.reset_states()
             for step in tqdm(
-                range(num_steps), total=num_steps, ncols=70, leave=False, unit="b"
+                range(num_steps), total=num_steps, ncols=70, leave=False, unit="b",disable= ~progress_bar
             ):
 
                 u, seq, pos, neg = sampler.next_batch()
