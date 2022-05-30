@@ -712,7 +712,8 @@ class SASREC(tf.keras.Model):
             step_loss = []
             train_loss.reset_states()
             for step in tqdm(
-                range(num_steps), total=num_steps, ncols=70, leave=False, unit="b",disable= ~progress_bar
+                range(num_steps), total=num_steps, ncols=70, leave=False, unit="b",
+                # disable= ~progress_bar
             ):
 
                 u, seq, pos, neg = sampler.next_batch()
