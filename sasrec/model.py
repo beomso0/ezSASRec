@@ -730,9 +730,9 @@ class SASREC(tf.keras.Model):
                 print(
                     f"epoch: {epoch}, test (NDCG@10: {t_test[0]}, HR@10: {t_test[1]})"
                 )
-                self.history['epoch'].append(epoch)
-                self.history['NDCG@10'].append(t_test[0])
-                self.history['HR@10'].append(t_test[1])
+                self.history['epoch'] = self.history['epoch'] + list(epoch)
+                self.history['NDCG@10'] = self.history['NDCG@10'] + list(t_test[0])
+                self.history['HR@10'] = self.history['HR@10'] + list(t_test[1])
                 
                 if t_test[1] > self.best_score:
                     self.best_score = t_test[1]
