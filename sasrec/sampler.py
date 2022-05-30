@@ -1,4 +1,3 @@
-# https://github.com/kang205/SASRec/blob/master/sampler.py
 import numpy as np
 from multiprocessing import Process, Queue
 
