@@ -396,6 +396,7 @@ class SASREC(tf.keras.Model):
         self.epoch = 0
         self.best_score=0
         self.val_users = []
+        self.history = {'epoch': [],'NDCG@10': [],'HR@10': []}
 
         self.item_num = kwargs.get("item_num", None)
         self.seq_max_len = kwargs.get("seq_max_len", 100)
@@ -729,6 +730,9 @@ class SASREC(tf.keras.Model):
                 print(
                     f"epoch: {epoch}, test (NDCG@10: {t_test[0]}, HR@10: {t_test[1]})"
                 )
+                self.history['epoch'].append(epoch)
+                self.history['NDCG@10'].append(t_test[0])
+                self.history['HR@10'].append(t_test[1])
                 
                 if t_test[1] > self.best_score:
                     self.best_score = t_test[1]
