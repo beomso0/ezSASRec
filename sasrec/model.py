@@ -739,6 +739,10 @@ class SASREC(tf.keras.Model):
                     if auto_save:
                         self.save(path,exp_name)
                         print('best score model updated and saved')
+        
+        if auto_save:
+            with open(path+exp_name+'/'+exp_name+'_train_log.txt','w') as f:
+                f.writelines(self.history)
 
     def evaluate(self, dataset,**kwargs):
         """
@@ -942,10 +946,6 @@ class SASREC(tf.keras.Model):
         return return_df
     
     def save(self,path, exp_name='sas_experiment'):
-
-        # score suffix
-        score = self.best_score
-        epoch = self.epoch
         
         # make dir
         if not os.path.exists(path+exp_name):
@@ -957,10 +957,10 @@ class SASREC(tf.keras.Model):
         with open(path+exp_name+'/'+exp_name+'_model_args','wb') as f:
             pickle.dump(dict_to_save, f)
         
-        if not os.path.isfile(path+exp_name+'/'+exp_name+'_train_log.txt'): 
-            with open(path+exp_name+'/'+exp_name+'_train_log.txt','w') as f:
+        if not os.path.isfile(path+exp_name+'/'+exp_name+'_save_log.txt'): 
+            with open(path+exp_name+'/'+exp_name+'_save_log.txt','w') as f:
                 f.writelines(f'Model args: {dict_to_save}\n')
-                f.writelines(f'[epoch {epoch}] Best HR@10 score: {score}\n')
+                f.writelines(f'[epoch {self.epoch}] Best HR@10 score: {self.best_score}\n')
         else:
-            with open(path+exp_name+'/'+exp_name+'_train_log.txt','a') as f:
-                f.writelines(f'[epoch {epoch}] Best HR@10 score: {score}\n')
+            with open(path+exp_name+'/'+exp_name+'_save_log.txt','a') as f:
+                f.writelines(f'[epoch {self.epoch}] Best HR@10 score: {self.best_score}\n')
