@@ -1,3 +1,4 @@
+from itertools import count
 import random
 import numpy as np
 import pandas as pd
@@ -396,7 +397,7 @@ class SASREC(tf.keras.Model):
         self.epoch = 0
         self.best_score=0
         self.val_users = []
-        self.history = {'epoch': [],'NDCG@10': [],'HR@10': []}
+        self.history = pd.DataFrame(columns=['epoch','NDCG@10','HR@10'])
 
         self.item_num = kwargs.get("item_num", None)
         self.seq_max_len = kwargs.get("seq_max_len", 100)
@@ -730,9 +731,7 @@ class SASREC(tf.keras.Model):
                 print(
                     f"epoch: {epoch}, test (NDCG@10: {t_test[0]}, HR@10: {t_test[1]})"
                 )
-                self.history['epoch'] = self.history['epoch'] + list(epoch)
-                self.history['NDCG@10'] = self.history['NDCG@10'] + list(t_test[0])
-                self.history['HR@10'] = self.history['HR@10'] + list(t_test[1])
+                self.history.loc[len(self.history)] = [epoch,t_test[0],t_test[1]]
                 
                 if t_test[1] > self.best_score:
                     self.best_score = t_test[1]
@@ -741,8 +740,9 @@ class SASREC(tf.keras.Model):
                         print('best score model updated and saved')
         
         if auto_save:
-            with open(path+exp_name+'/'+exp_name+'_train_log.txt','w') as f:
-                f.writelines(self.history)
+            self.history.to_csv(path+exp_name+'/'+exp_name+'_train_log.csv',index=False)
+            # with open(path+exp_name+'/'+exp_name+'_train_log.txt','w') as f:
+            #     f.writelines(self.history)
 
     def evaluate(self, dataset,**kwargs):
         """
