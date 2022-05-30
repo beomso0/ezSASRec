@@ -11,7 +11,7 @@ Original codes and architectures are from
 1. [Self-Attentive Sequential Recommendation](https://arxiv.org/pdf/1808.09781.pdf)
 2. [A Case Study on Sampling Strategies for Evaluating Neural Sequential Item Recommendation Models](https://www.informatik.uni-wuerzburg.de/datascience/staff/dallmann/?tx_extbibsonomycsl_publicationlist%5Baction%5D=download&tx_extbibsonomycsl_publicationlist%5Bcontroller%5D=Document&tx_extbibsonomycsl_publicationlist%5BfileName%5D=main.pdf&tx_extbibsonomycsl_publicationlist%5BintraHash%5D=23f589b27e22018936753bb64b33971d&tx_extbibsonomycsl_publicationlist%5BuserName%5D=dallmann&cHash=dd7c54126f6c20972a502e9cc223cec2)
 
-## Usage
+## Quick Start
 ### a. sas_evaluate
 
 - added parameters
