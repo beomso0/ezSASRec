@@ -1,6 +1,6 @@
 import multiprocessing
 import numpy as np
-from multiprocessing import Process, Queue, Array
+from multiprocessing import Process, Queue, Array, Manager
 import tensorflow as tf
 
 
@@ -119,6 +119,8 @@ class PredictSampler(object):
         
         self.result_queue = Queue(maxsize=n_workers * 10)
         self.processors = []
+        mgr = Manager()
+        self.mgr_user_list = mgr.list(user_id_list)
         for _ in range(n_workers):
             self.processors.append(
                 Process(
@@ -132,6 +134,7 @@ class PredictSampler(object):
                         batch_size,
                         maxlen,
                         self.result_queue,
+                        self.mgr_user_list
                     ),
                 )
             )
@@ -147,7 +150,7 @@ class PredictSampler(object):
             p.join()
 
 def predict_sample_function(
-    user_history, user_map_dict,item_map_dict,user_id_list, item_list, batch_size, max_len, result_queue, 
+    user_history, user_map_dict,item_map_dict,user_id_list, item_list, batch_size, max_len, result_queue, mgr_user_list
 ):
     """Batch sampler that creates a sequence of negative items based on the
     original sequence of items (positive) that the user has interacted with.
@@ -164,13 +167,13 @@ def predict_sample_function(
     
 
     def sample():
-        for i in range(len(user_id_list)):
+        
+        user_id = mgr_user_list.pop()
+        user = user_map_dict[user_id]
+        seq = tf.keras.preprocessing.sequence.pad_sequences([user_history[user]],padding="pre", truncating="pre", maxlen=max_len)
+        cand = np.array([[item_map_dict[i] for i in item_list]])
 
-            user = user_map_dict[user_id_list[i]]
-            seq = tf.keras.preprocessing.sequence.pad_sequences([user_history[user]],padding="pre", truncating="pre", maxlen=max_len)
-            cand = np.array([[item_map_dict[i] for i in item_list]])
-
-            return (user_id_list[i], seq, cand)
+        return (user_id, seq, cand)
 
     while True:
         one_batch = []
@@ -178,3 +181,12 @@ def predict_sample_function(
             one_batch.append(sample())
 
         result_queue.put(zip(*one_batch))
+
+#%%
+# import numpy as np
+# from multiprocessing import Array, Manager
+# a = Array('i',[1,23])
+# mgr = Manager()
+# l = mgr.list([1,2,3])
+# l.pop()
+# print(l)
