@@ -1,0 +1,7 @@
+custom_SASRec
+====================
+
+Model contents
+-------------------
+.. automodule:: sasrec.model.MultiHeadAttention
+  :members:

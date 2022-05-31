@@ -8,20 +8,9 @@ Welcome to custom_SASRec's documentation!
 
 .. toctree::
    :maxdepth: 2
-   :caption: Quick Start
-
-   quickstart.md
-
-.. toctree::
-   :maxdepth: 2
-   :caption: Model
+   :caption: Model:
 
    model.md
-
-.. toctree::
-   :maxdepth: 2
-   :caption: Util
-
    util.md
 
 Indices and tables

@@ -177,32 +177,6 @@ def filter_k_core(data, core_num=0, col_user="userID", col_item="itemID"):
 
     return df_inp
 
-def save_sasrec_model(model,path, exp_name='sas_experiment',**kwargs):
-  
-  # score suffix
-  save_info = kwargs.get("save_info")
-  score = save_info['score']
-  epoch = save_info['epoch']
-  
-  # make dir
-  if not os.path.exists(path+exp_name):
-    os.mkdir(path+exp_name)
-
-  model.save_weights(path+exp_name+'/'+exp_name+'_weights') # save trained weights
-  arg_list = ['item_num','seq_max_len','num_blocks','embedding_dim','attention_dim','attention_num_heads','dropout_rate','conv_dims','l2_reg','num_neg_test']
-  dict_to_save = {a: model.__dict__[a] for a in arg_list}
-  with open(path+exp_name+'/'+exp_name+'_model_args','wb') as f:
-    pickle.dump(dict_to_save, f)
-  
-  if not os.path.isfile(path+exp_name+'/'+exp_name+'_train_log.txt'): 
-    with open(path+exp_name+'/'+exp_name+'_train_log.txt','w') as f:
-      f.writelines(f'Model args: {dict_to_save}\n')
-      f.writelines(f'[epoch {epoch}] Best HR@10 score: {score}\n')
-  else:
-    with open(path+exp_name+'/'+exp_name+'_train_log.txt','a') as f:
-      f.writelines(f'[epoch {epoch}] Best HR@10 score: {score}\n')
-
-
 def load_sasrec_model(path, exp_name='sas_experiment'):
   with open(path+exp_name+'/'+exp_name+'_model_args','rb') as f:
     arg_dict = pickle.load(f)

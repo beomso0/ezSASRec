@@ -389,7 +389,6 @@ class SASREC(tf.keras.Model):
             conv_dims (list): List of the dimensions of the Feedforward layer.
             dropout_rate (float): Dropout rate.
             l2_reg (float): Coefficient of the L2 regularization.
-            num_neg_test (int): Number of negative examples used in testing.
         """
 
         super(SASREC, self).__init__()
@@ -408,7 +407,6 @@ class SASREC(tf.keras.Model):
         self.conv_dims = kwargs.get("conv_dims", [100, 100])
         self.dropout_rate = kwargs.get("dropout_rate", 0.5)
         self.l2_reg = kwargs.get("l2_reg", 0.0)
-        self.num_neg_test = kwargs.get("num_neg_test", 100)
 
         self.item_embedding_layer = tf.keras.layers.Embedding(
             self.item_num + 1,
@@ -952,7 +950,7 @@ class SASREC(tf.keras.Model):
             os.mkdir(path+exp_name)
 
         self.save_weights(path+exp_name+'/'+exp_name+'_weights') # save trained weights
-        arg_list = ['item_num','seq_max_len','num_blocks','embedding_dim','attention_dim','attention_num_heads','dropout_rate','conv_dims','l2_reg','num_neg_test']
+        arg_list = ['item_num','seq_max_len','num_blocks','embedding_dim','attention_dim','attention_num_heads','dropout_rate','conv_dims','l2_reg']
         dict_to_save = {a: self.__dict__[a] for a in arg_list}
         with open(path+exp_name+'/'+exp_name+'_model_args','wb') as f:
             pickle.dump(dict_to_save, f)
