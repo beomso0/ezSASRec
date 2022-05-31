@@ -189,7 +189,7 @@ def load_sasrec_model(path, exp_name='sas_experiment'):
                    dropout_rate=arg_dict['dropout_rate'],
                    conv_dims = arg_dict['conv_dims'],
                    l2_reg=arg_dict['l2_reg'],
-                   num_neg_test=arg_dict['num_neg_test'],
+                   history=arg_dict['history'],
     )
   model.load_weights(path+exp_name+'/'+exp_name+'_weights')
   return model

@@ -950,7 +950,7 @@ class SASREC(tf.keras.Model):
             os.mkdir(path+exp_name)
 
         self.save_weights(path+exp_name+'/'+exp_name+'_weights') # save trained weights
-        arg_list = ['item_num','seq_max_len','num_blocks','embedding_dim','attention_dim','attention_num_heads','dropout_rate','conv_dims','l2_reg']
+        arg_list = ['item_num','seq_max_len','num_blocks','embedding_dim','attention_dim','attention_num_heads','dropout_rate','conv_dims','l2_reg','history']
         dict_to_save = {a: self.__dict__[a] for a in arg_list}
         with open(path+exp_name+'/'+exp_name+'_model_args','wb') as f:
             pickle.dump(dict_to_save, f)
