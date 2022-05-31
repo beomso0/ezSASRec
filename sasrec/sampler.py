@@ -1,6 +1,7 @@
 import multiprocessing
 import numpy as np
-from multiprocessing import Process, Queue
+from multiprocessing import Process, Queue, Array
+import tensorflow as tf
 
 
 def random_neq(left, right, s):
@@ -118,7 +119,6 @@ class PredictSampler(object):
         
         self.result_queue = Queue(maxsize=n_workers * 10)
         self.processors = []
-        global_idx = multiprocessing.Value()
         for _ in range(n_workers):
             self.processors.append(
                 Process(
@@ -147,7 +147,7 @@ class PredictSampler(object):
             p.join()
 
 def predict_sample_function(
-    user_history, user_map_dict,item_map_dict,user_id_list, item_list, batch_size, maxlen, result_queue, 
+    user_history, user_map_dict,item_map_dict,user_id_list, item_list, batch_size, max_len, result_queue, 
 ):
     """Batch sampler that creates a sequence of negative items based on the
     original sequence of items (positive) that the user has interacted with.
@@ -162,35 +162,15 @@ def predict_sample_function(
         seed (int): seed for random generator
     """
     
-    i = 0
 
     def sample():
-        
-        user = user_map_dict[user_id_list[i]]
-        i+=1
+        for i in range(user_id_list):
 
-        seq = np.zeros([maxlen], dtype=np.int32)
-        idx = maxlen - 1
+            user = user_map_dict[user_id_list[i]]
+            seq = tf.keras.preprocessing.sequence.pad_sequences([user_history[user]],padding="pre", truncating="pre", maxlen=max_len)
+            cand = np.array([[item_map_dict[i] for i in item_list]])
 
-        list_to_seq = user_history[user] 
-        for i in reversed(list_to_seq):
-            seq[idx] = i
-            idx -= 1
-            if idx == -1:
-                break
-
-        ts = set(user_train[user])
-        for i in reversed(user_train[user][:-1]):
-            seq[idx] = i
-            pos[idx] = nxt
-            if nxt != 0:
-                neg[idx] = random_neq(1, itemnum + 1, ts)
-            nxt = i
-            idx -= 1
-            if idx == -1:
-                break
-
-        return (user, seq, pos, neg)
+            return (user_id_list[i], seq, cand)
 
     while True:
         one_batch = []

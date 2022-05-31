@@ -898,30 +898,27 @@ class SASREC(tf.keras.Model):
 
         return return_dict
     
-    def get_user_item_score(self, dataset, user_map_dict,item_map_dict,user_id_list, item_list,is_test=False):
+    def get_user_item_score(self, dataset, sampler,user_map_dict,item_map_dict,user_id_list, item_list,is_test=False,batch_size=128):
+        num_steps = int(len(user_id_list) / batch_size)
+
         all = dataset.User
         users = [user_map_dict[u] for u in user_id_list]
         items = [item_map_dict[i] for i in item_list]
         # inv_user_map = {v: k for k, v in user_map_dict.items()}
-        # inv_item_map = {v: k for k, v in item_map_dict.items()}        
-        score_dict = {i:[] for i in item_list}
+        # inv_item_map = {v: k for k, v in item_map_dict.items()}     
+            
+        # score_dict = {i:[] for i in item_list}
+        score_dict = {i:[] for i in user_id_list}
         
-        for u in tqdm(users,unit=' User',desc='Getting Scores for each user ...'):
-                
-            seq = np.zeros([self.seq_max_len], dtype=np.int32)
-            idx = self.seq_max_len - 1
-
-            list_to_seq = all[u] if not is_test else all[u][:-1]
-            for i in reversed(list_to_seq):
-                seq[idx] = i
-                idx -= 1
-                if idx == -1:
-                    break
+        for _ in tqdm(
+                range(num_steps), total=num_steps, ncols=70, leave=False, unit="b",
+            ):
+            
+            u,seq,cand = sampler.next_batch()
         
             inputs = {}
-            inputs["user"] = np.expand_dims(np.array([u]), axis=-1)
-            inputs["input_seq"] = np.array([seq])
-            inputs["candidate"] = np.array([items])
+            inputs["input_seq"] = seq
+            inputs["candidate"] = cand
 
             predictions = self.predict(inputs, len(items)-1)
             predictions = np.array(predictions)
@@ -929,17 +926,19 @@ class SASREC(tf.keras.Model):
 
             # pred_dict = {inv_item_map[v] : predictions[i] for i,v in enumerate(items)}
 
-            for i,v in enumerate(item_list):
-                score_dict[v].append(predictions[i])                      
+            # for i,v in enumerate(item_list):
+            #     score_dict[v].append(predictions[i]) 
+            for pred in predictions:
+                score_dict[u].append(pred)                     
 
-        return_df = pd.DataFrame({
-            'user_id':users,
-        })
+        # return_df = pd.DataFrame({
+        #     'user_id':users,
+        # })
         
-        for k in score_dict:
-            return_df[k] = score_dict[k]
+        # for k in score_dict:
+        #     return_df[k] = score_dict[k]
 
-        return return_df
+        return score_dict
 
     def new_get_user_item_score(self, dataset, user_map_dict,item_map_dict,user_id_list, item_list,is_test=False):
         all = dataset.User
@@ -956,43 +955,26 @@ class SASREC(tf.keras.Model):
                     'candidate':item_input
                 }                              
             for u in users]
-        
-        return_df = pd.DataFrame()
-        return_df['user_id'] = user_id_list
-        return_df['user_input'] = [
-                                    {
-                                        'input_seq':tf.keras.preprocessing.sequence.pad_sequences([all[u]],padding="pre", truncating="pre", maxlen=self.seq_max_len),
-                                        'candidate':item_input
-                                    }                              
-                                for u in users]
 
-        def get_score(input):
+        score_dict = {i:[] for i in item_list}
+        
+        for input in tqdm(input_list,unit=' User',desc='Getting Scores for each user ...'):
+
             predictions = self.predict(input, len(items)-1)
             predictions = np.array(predictions)
             predictions = predictions[0]
-            return predictions
 
-        return_df['score'] = return_df['user_input'].parallel_apply(lambda x: get_score(x))
+            # pred_dict = {inv_item_map[v] : predictions[i] for i,v in enumerate(items)}
 
-        # score_dict = {i:[] for i in item_list}
+            for i,v in enumerate(item_list):
+                score_dict[v].append(predictions[i])                      
+
+        return_df = pd.DataFrame({
+            'user_id':users,
+        })
         
-        # for input in tqdm(input_list,unit=' User',desc='Getting Scores for each user ...'):
-
-        #     predictions = self.predict(input, len(items)-1)
-        #     predictions = np.array(predictions)
-        #     predictions = predictions[0]
-
-        #     # pred_dict = {inv_item_map[v] : predictions[i] for i,v in enumerate(items)}
-
-        #     for i,v in enumerate(item_list):
-        #         score_dict[v].append(predictions[i])                      
-
-        # return_df = pd.DataFrame({
-        #     'user_id':users,
-        # })
-        
-        # for k in score_dict:
-        #     return_df[k] = score_dict[k]
+        for k in score_dict:
+            return_df[k] = score_dict[k]
 
         return return_df
     
