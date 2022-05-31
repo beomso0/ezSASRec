@@ -177,7 +177,7 @@ def filter_k_core(data, core_num=0, col_user="userID", col_item="itemID"):
 
     return df_inp
 
-def load_sasrec_model(path, exp_name='sas_experiment'):
+def load_model(path, exp_name='sas_experiment'):
   with open(path+exp_name+'/'+exp_name+'_model_args','rb') as f:
     arg_dict = pickle.load(f)
   model = SASREC(item_num=arg_dict['item_num'],
