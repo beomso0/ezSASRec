@@ -115,7 +115,7 @@ class PredictSampler(object):
         n_workers (int): number of workers for parallel execution
     """
 
-    def __init__(self, User, user_map_dict,item_map_dict,user_id_list, item_list, batch_size=64, maxlen=10, n_workers=1):
+    def __init__(self, User, user_map_dict,item_map_dict,user_id_list, item_list, batch_size=128, maxlen=10, n_workers=1):
         
         self.result_queue = Queue(maxsize=n_workers * 10)
         self.processors = []
@@ -164,7 +164,7 @@ def predict_sample_function(
     
 
     def sample():
-        for i in range(user_id_list):
+        for i in range(len(user_id_list)):
 
             user = user_map_dict[user_id_list[i]]
             seq = tf.keras.preprocessing.sequence.pad_sequences([user_history[user]],padding="pre", truncating="pre", maxlen=max_len)
