@@ -4,8 +4,6 @@ import random
 import numpy as np
 import pandas as pd
 from tqdm import tqdm
-from pandarallel import pandarallel
-pandarallel.initialize(progress_bar=True)
 import pickle
 import os
 import tensorflow as tf
