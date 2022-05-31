@@ -972,7 +972,7 @@ class SASREC(tf.keras.Model):
             predictions = predictions[0]
             return predictions
 
-        return_df['score'] = return_df['user_input'].progress_apply(lambda x: get_score(x))
+        return_df['score'] = return_df['user_input'].parallel_apply(lambda x: get_score(x))
 
         # score_dict = {i:[] for i in item_list}
         
