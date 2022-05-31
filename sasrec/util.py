@@ -178,18 +178,21 @@ def filter_k_core(data, core_num=0, col_user="userID", col_item="itemID"):
     return df_inp
 
 def load_model(path, exp_name='sas_experiment'):
-  with open(path+exp_name+'/'+exp_name+'_model_args','rb') as f:
-    arg_dict = pickle.load(f)
-  model = SASREC(item_num=arg_dict['item_num'],
-                   seq_max_len=arg_dict['seq_max_len'],
-                   num_blocks=arg_dict['num_blocks'],
-                   embedding_dim=arg_dict['embedding_dim'],
-                   attention_dim=arg_dict['attention_dim'],
-                   attention_num_heads=arg_dict['attention_num_heads'],
-                   dropout_rate=arg_dict['dropout_rate'],
-                   conv_dims = arg_dict['conv_dims'],
-                   l2_reg=arg_dict['l2_reg'],
-                   history=arg_dict['history'],
-    )
-  model.load_weights(path+exp_name+'/'+exp_name+'_weights')
-  return model
+    with open(path+exp_name+'/'+exp_name+'_model_args','rb') as f:
+        arg_dict = pickle.load(f)
+    
+    if 'history' not in arg_dict.keys():
+        arg_dict['history'] = None
+    model = SASREC(item_num=arg_dict['item_num'],
+                    seq_max_len=arg_dict['seq_max_len'],
+                    num_blocks=arg_dict['num_blocks'],
+                    embedding_dim=arg_dict['embedding_dim'],
+                    attention_dim=arg_dict['attention_dim'],
+                    attention_num_heads=arg_dict['attention_num_heads'],
+                    dropout_rate=arg_dict['dropout_rate'],
+                    conv_dims = arg_dict['conv_dims'],
+                    l2_reg=arg_dict['l2_reg'],
+                    history=arg_dict['history'],
+        )
+    model.load_weights(path+exp_name+'/'+exp_name+'_weights')
+    return model

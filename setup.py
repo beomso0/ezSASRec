@@ -8,7 +8,7 @@ with open("README.md", "r") as fh:
 
 setuptools.setup(
   name="custom_SASRec", 
-  version="0.4.6",
+  version="0.4.7",
   author="Beomso0",
   author_email="univ3352@gmail.com",
   description="customized SASRec",
