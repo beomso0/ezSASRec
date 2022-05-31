@@ -662,7 +662,6 @@ class SASREC(tf.keras.Model):
         auto_save = kwargs.get("auto_save",False)
         path = kwargs.get("path",'./')
         exp_name = kwargs.get("exp_name",'SASRec_exp')
-        progress_bar = kwargs.get("progress_bar",True)
         
         num_steps = int(len(dataset.user_train) / batch_size)
 
@@ -923,6 +922,43 @@ class SASREC(tf.keras.Model):
             inputs["candidate"] = np.array([items])
 
             predictions = self.predict(inputs, len(items)-1)
+            predictions = np.array(predictions)
+            predictions = predictions[0]
+
+            # pred_dict = {inv_item_map[v] : predictions[i] for i,v in enumerate(items)}
+
+            for i,v in enumerate(item_list):
+                score_dict[v].append(predictions[i])                      
+
+        return_df = pd.DataFrame({
+            'user_id':users,
+        })
+        
+        for k in score_dict:
+            return_df[k] = score_dict[k]
+
+        return return_df
+
+    def new_get_user_item_score(self, dataset, user_map_dict,item_map_dict,user_id_list, item_list,is_test=False):
+        all = dataset.User
+        users = [user_map_dict[u] for u in user_id_list]
+        items = [item_map_dict[i] for i in item_list]
+        # inv_user_map = {v: k for k, v in user_map_dict.items()}
+        # inv_item_map = {v: k for k, v in item_map_dict.items()}  
+        item_input = np.array([items])
+
+        input_list = [
+                {
+                    'input_seq':tf.keras.preprocessing.sequence.pad_sequences([all[u]],padding="pre", truncating="pre", maxlen=self.seq_max_len),
+                    'candidate':item_input
+                }                              
+            for u in users]
+
+        score_dict = {i:[] for i in item_list}
+        
+        for input in tqdm(input_list,unit=' User',desc='Getting Scores for each user ...'):
+
+            predictions = self.predict(input, len(items)-1)
             predictions = np.array(predictions)
             predictions = predictions[0]
 

@@ -46,8 +46,8 @@
 <ul class="current">
 <li class="toctree-l1 current"><a class="current reference internal" href="#">model</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="#sasrec-model-sasrec">sasrec.model.SASREC</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="#sasrec-model-sasrec-predict">sasrec.model.SASREC.predict</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#sasrec-model-sasrec-train">sasrec.model.SASREC.train</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#sasrec-model-sasrec-predict">sasrec.model.SASREC.predict</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#sasrec-model-sasrec-evaluate">sasrec.model.SASREC.evaluate</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#sasrec-model-sasrec-recommend-item">sasrec.model.SASREC.recommend_item</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#sasrec-model-sasrec-get-user-item-score">sasrec.model.SASREC.get_user_item_score</a></li>
@@ -95,6 +95,9 @@ Self-Attentive Sequential Recommendation Using Transformer</p>
 <section id="sasrec-model-sasrec">
 <h2>sasrec.model.SASREC<a class="headerlink" href="#sasrec-model-sasrec" title="이 표제에 대한 퍼머링크"></a></h2>
 <p>SASREC model initialization.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">sasrec</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">SASREC</span><span class="p">(</span><span class="n">item_num</span><span class="p">,</span> <span class="n">seq_max_len</span><span class="o">=</span><span class="mi">100</span><span class="p">,</span> <span class="n">num_blocks</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">embedding_dim</span><span class="o">=</span><span class="mi">100</span><span class="p">,</span> <span class="n">attention_dim</span><span class="o">=</span><span class="mi">100</span><span class="p">,</span> <span class="n">conv_dims</span><span class="o">=</span><span class="p">[</span><span class="mi">100</span><span class="p">,</span><span class="mi">100</span><span class="p">],</span> <span class="n">dropout_rate</span><span class="o">=</span><span class="mf">0.5</span><span class="p">,</span> <span class="n">l2_reg</span><span class="o">=</span><span class="mf">0.0</span><span class="p">)</span>
+</pre></div>
+</div>
 <ul class="simple">
 <li><p>Args:</p>
 <ul>
@@ -118,11 +121,32 @@ Self-Attentive Sequential Recommendation Using Transformer</p>
 </ul>
 </li>
 </ul>
-<section id="sasrec-model-sasrec-predict">
-<h3>sasrec.model.SASREC.predict<a class="headerlink" href="#sasrec-model-sasrec-predict" title="이 표제에 대한 퍼머링크"></a></h3>
-</section>
 <section id="sasrec-model-sasrec-train">
 <h3>sasrec.model.SASREC.train<a class="headerlink" href="#sasrec-model-sasrec-train" title="이 표제에 대한 퍼머링크"></a></h3>
+<p>High level function for model training as well as well as evaluation on the validation and test dataset</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">sasrec</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">SASREC</span><span class="o">.</span><span class="n">train</span><span class="p">(</span><span class="n">dataset</span><span class="p">,</span> <span class="n">sampler</span><span class="p">,</span><span class="n">num_epochs</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span><span class="n">batch_size</span><span class="o">=</span><span class="mi">128</span><span class="p">,</span><span class="n">lr</span><span class="o">=</span><span class="mf">0.001</span><span class="p">,</span><span class="n">val_epoch</span><span class="o">=</span><span class="mi">5</span><span class="p">,</span><span class="n">val_target_user_n</span><span class="o">=</span><span class="mi">1000</span><span class="p">,</span><span class="n">target_item_n</span><span class="o">=-</span><span class="mi">1</span><span class="p">,</span><span class="n">auto_save</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span><span class="n">path</span><span class="o">=</span><span class="s1">&#39;./&#39;</span><span class="p">,</span><span class="n">exp_name</span><span class="o">=</span><span class="s1">&#39;SASRec_exp&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+<ul class="simple">
+<li><p>Args:</p>
+<ul>
+<li><p><strong>dataset</strong>: <em>(sasrec.util.SASRecDataSet)</em> SASRecDataSet object</p></li>
+<li><p><strong>sampler</strong>: <em>(sasrec.sampler.WarpSampler)</em> WarpSampler object</p></li>
+<li><p><strong>num_epochs</strong>: <em>(int)</em>, number of epochs</p></li>
+<li><p><strong>batch_size</strong>: <em>(int)</em>, size of batch</p></li>
+<li><p><strong>lr</strong>: <em>(float)</em>, learning rate</p></li>
+<li><p><strong>val_epoch</strong>: <em>(int)</em>, validation interval</p></li>
+<li><p><strong>val_target_user_n</strong>: <em>(int)</em>, number of users for validation.</p></li>
+<li><p><strong>target_item_n</strong>: <em>(int)</em>, number of items(including negative samples) for validation. <em>-1</em> means all.</p></li>
+<li><p><strong>auto_save</strong>: <em>(bool)</em>, flag to automatically save best score model</p></li>
+<li><p><strong>path</strong>: <em>(str)</em>, path to save model, optional</p></li>
+<li><p><strong>exp_name</strong>: <em>(str)</em>, name of experiment, optional</p></li>
+</ul>
+</li>
+</ul>
+</section>
+<section id="sasrec-model-sasrec-predict">
+<h3>sasrec.model.SASREC.predict<a class="headerlink" href="#sasrec-model-sasrec-predict" title="이 표제에 대한 퍼머링크"></a></h3>
 </section>
 <section id="sasrec-model-sasrec-evaluate">
 <h3>sasrec.model.SASREC.evaluate<a class="headerlink" href="#sasrec-model-sasrec-evaluate" title="이 표제에 대한 퍼머링크"></a></h3>
