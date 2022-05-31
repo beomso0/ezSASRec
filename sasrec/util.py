@@ -151,7 +151,7 @@ def filter_k_core(data, core_num=0, col_user="userID", col_item="itemID"):
     repeatedly applying min_rating_filter until the condition is satisfied.
 
     """
-    num_users, num_items = len(data[col_user].unique()), len(data[col_item].unique())
+    num_users, num_items = data[col_user].nunique(), data[col_item].nunique()
     print(f"Original: {num_users} users and {num_items} items")
     df_inp = data.copy()
 
@@ -171,9 +171,9 @@ def filter_k_core(data, core_num=0, col_user="userID", col_item="itemID"):
             ):
                 break
     df_inp = df_inp.sort_values(by=[col_user])
-    num_users = len(df_inp[col_user].unique())
-    num_items = len(df_inp[col_item].unique())
-    print("Final: {num_users} users and {num_items} items")
+    num_users = df_inp[col_user].nunique()
+    num_items = df_inp[col_item].nunique()
+    print(f"Final: {num_users} users and {num_items} items")
 
     return df_inp
 
