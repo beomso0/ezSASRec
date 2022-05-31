@@ -766,10 +766,7 @@ class SASREC(tf.keras.Model):
         valid_user = 0.0
         
         if len(self.val_users) == 0:
-            if usernum > target_user_n:
-                self.val_users = random.sample(range(1, usernum + 1), target_user_n)
-            else:
-                self.val_users = range(1, usernum + 1)
+            self.sample_val_users(dataset,target_user_n)
 
         for u in tqdm(self.val_users, ncols=70, leave=False, unit="b"):
 
@@ -952,7 +949,7 @@ class SASREC(tf.keras.Model):
         self.save_weights(path+exp_name+'/'+exp_name+'_weights') # save trained weights
         arg_list = ['item_num','seq_max_len','num_blocks','embedding_dim','attention_dim','attention_num_heads','dropout_rate','conv_dims','l2_reg','history']
         dict_to_save = {a: self.__dict__[a] for a in arg_list}
-        
+
         with open(path+exp_name+'/'+exp_name+'_model_args','wb') as f:
             pickle.dump(dict_to_save, f)
         
@@ -963,3 +960,10 @@ class SASREC(tf.keras.Model):
         else:
             with open(path+exp_name+'/'+exp_name+'_save_log.txt','a') as f:
                 f.writelines(f'[epoch {self.epoch}] Best HR@10 score: {self.best_score}\n')
+    
+    def sample_val_users(self,dataset,target_user_n):
+        usernum = dataset.usernum
+        if usernum > target_user_n:
+            self.val_users = random.sample(range(1, usernum + 1), target_user_n)
+        else:
+            self.val_users = range(1, usernum + 1)
