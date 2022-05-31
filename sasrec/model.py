@@ -3,6 +3,8 @@ import random
 import numpy as np
 import pandas as pd
 from tqdm import tqdm
+from pandarallel import pandarallel
+pandarallel.initialize(progress_bar=True)
 import pickle
 import os
 import tensorflow as tf
@@ -945,6 +947,7 @@ class SASREC(tf.keras.Model):
         items = [item_map_dict[i] for i in item_list]
         # inv_user_map = {v: k for k, v in user_map_dict.items()}
         # inv_item_map = {v: k for k, v in item_map_dict.items()}  
+        
         item_input = np.array([items])
 
         input_list = [
@@ -953,26 +956,43 @@ class SASREC(tf.keras.Model):
                     'candidate':item_input
                 }                              
             for u in users]
-
-        score_dict = {i:[] for i in item_list}
         
-        for input in tqdm(input_list,unit=' User',desc='Getting Scores for each user ...'):
+        return_df = pd.DataFrame()
+        return_df['user_id'] = user_id_list
+        return_df['user_input'] = [
+                                    {
+                                        'input_seq':tf.keras.preprocessing.sequence.pad_sequences([all[u]],padding="pre", truncating="pre", maxlen=self.seq_max_len),
+                                        'candidate':item_input
+                                    }                              
+                                for u in users]
 
+        def get_score(input):
             predictions = self.predict(input, len(items)-1)
             predictions = np.array(predictions)
             predictions = predictions[0]
+            return predictions
 
-            # pred_dict = {inv_item_map[v] : predictions[i] for i,v in enumerate(items)}
+        return_df['score'] = return_df['user_input'].progress_apply(lambda x: get_score(x))
 
-            for i,v in enumerate(item_list):
-                score_dict[v].append(predictions[i])                      
-
-        return_df = pd.DataFrame({
-            'user_id':users,
-        })
+        # score_dict = {i:[] for i in item_list}
         
-        for k in score_dict:
-            return_df[k] = score_dict[k]
+        # for input in tqdm(input_list,unit=' User',desc='Getting Scores for each user ...'):
+
+        #     predictions = self.predict(input, len(items)-1)
+        #     predictions = np.array(predictions)
+        #     predictions = predictions[0]
+
+        #     # pred_dict = {inv_item_map[v] : predictions[i] for i,v in enumerate(items)}
+
+        #     for i,v in enumerate(item_list):
+        #         score_dict[v].append(predictions[i])                      
+
+        # return_df = pd.DataFrame({
+        #     'user_id':users,
+        # })
+        
+        # for k in score_dict:
+        #     return_df[k] = score_dict[k]
 
         return return_df
     
