@@ -942,7 +942,7 @@ class SASREC(tf.keras.Model):
 
         return return_df
 
-    def new_get_user_item_score(self, dataset, sampler,user_map_dict,item_map_dict,user_id_list, item_list,is_test=False,batch_size=128):
+    def new_get_user_item_score(self, dataset, sampler,user_map_dict,item_map_dict,user_id_list, item_list,batch_size=128):
         all = dataset.User
         num_steps = int(len(user_id_list)/batch_size)
         users = [user_map_dict[u] for u in user_id_list]
