@@ -115,7 +115,7 @@ class PredictSampler(object):
         n_workers (int): number of workers for parallel execution
     """
 
-    def __init__(self, User, user_map_dict,item_map_dict,user_id_list, item_list, batch_size=128, maxlen=10, n_workers=1):
+    def __init__(self, User, user_map_dict,user_id_list, batch_size=128,n_workers=1):
         
         self.result_queue = Queue(maxsize=n_workers * 10)
         self.processors = []
@@ -128,11 +128,7 @@ class PredictSampler(object):
                     args=(
                         User,
                         user_map_dict,
-                        item_map_dict,
-                        user_id_list,
-                        item_list,
                         batch_size,
-                        maxlen,
                         self.result_queue,
                         self.mgr_user_list
                     ),
@@ -150,7 +146,7 @@ class PredictSampler(object):
             p.join()
 
 def predict_sample_function(
-    user_history, user_map_dict,item_map_dict,user_id_list, item_list, batch_size, max_len, result_queue, mgr_user_list
+    user_history, user_map_dict,batch_size, result_queue, mgr_user_list
 ):
     """Batch sampler that creates a sequence of negative items based on the
     original sequence of items (positive) that the user has interacted with.
@@ -171,25 +167,17 @@ def predict_sample_function(
         user_id = mgr_user_list.pop()
         user = user_map_dict[user_id]
         seq = user_history[user]
-        cand = [item_map_dict[i] for i in item_list]
 
-        return (user_id, seq, cand)
+        return (user_id, seq)
 
     while True:
         one_batch = []
         for i in range(batch_size):
+            if len(mgr_user_list)<=0:
+              break
             one_batch.append(sample())
 
         result_queue.put(zip(*one_batch))
-        print(len(mgr_user_list))
+        # print(len(mgr_user_list))
         if len(mgr_user_list)<=0:
             break
-
-#%%
-# import numpy as np
-# from multiprocessing import Array, Manager
-# a = Array('i',[1,23])
-# mgr = Manager()
-# l = mgr.list([1,2,3])
-# l.pop()
-# print(l)

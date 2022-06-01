@@ -554,6 +554,7 @@ class SASREC(tf.keras.Model):
             seq_attention,
             [tf.shape(input_seq)[0] * self.seq_max_len, self.embedding_dim],
         )  # (b*s, d)
+        # print(candidate)
         candidate_emb = self.item_embedding_layer(candidate)  # (b, s, d)
         candidate_emb = tf.transpose(candidate_emb, perm=[0, 2, 1])  # (b, d, s)
 
@@ -932,48 +933,48 @@ class SASREC(tf.keras.Model):
                 score_dict[v].append(predictions[i])                      
 
         return_df = pd.DataFrame({
-            'user_id':users,
+            'user_id':user_id_list,
         })
         
         for k in score_dict:
             return_df[k] = score_dict[k]
+        
+        return_df = return_df.sort_values(by='user_id').reset_index(drop=True)
 
         return return_df
         
-    def new_get_user_item_score(self, dataset, sampler,user_map_dict,item_map_dict,user_id_list, item_list,batch_size=128):
-        all = dataset.User
-        num_steps = int(len(user_id_list)/batch_size)+1
-        users = [user_map_dict[u] for u in user_id_list]
-        items = [item_map_dict[i] for i in item_list]
-        # inv_user_map = {v: k for k, v in user_map_dict.items()}
-        # inv_item_map = {v: k for k, v in item_map_dict.items()}  
+    def new_get_user_item_score(self, sampler,item_map_dict,user_id_list, item_list,batch_size=128):
+
+        num_steps = int(len(user_id_list)/batch_size)
+        cand = [item_map_dict[i] for i in item_list]
         score_dict = dict()
 
         for _ in tqdm(
-                range(num_steps), total=num_steps, ncols=70, leave=False, unit="b",
+                range(num_steps), total=num_steps, leave=True, unit="batch",
             ):
             
-            u,seq,cand = sampler.next_batch()
+            try:
+                u,seq = sampler.next_batch()
+            except ValueError:
+                break
 
             inputs = self.create_combined_dataset_pred(u,seq,cand)
+            # print(inputs)
 
-            predictions = self.batch_predict(inputs, len(items)-1)
+            predictions = self.batch_predict(inputs, len(cand)-1)
             predictions = np.array(predictions)
-            # predictions = predictions[0]
 
-            # pred_dict = {inv_item_map[v] : predictions[i] for i,v in enumerate(items)}
-
-            # for i,v in enumerate(item_list):
-            #     score_dict[v].append(predictions[i]) 
             for i in range(len(u)):
                 score_dict[u[i]]=predictions[i] 
-
-            print('length of return: ',len(score_dict))
             
-            if len(score_dict)>=len(user_id_list):
-                sampler.close()
+            # if len(score_dict)>=len(user_id_list):
+            #     sampler.close()
 
-        return score_dict
+        return_df = pd.DataFrame(list(score_dict.items()),columns = ['user_id','score_array']).set_index('user_id',drop=True)
+        return_df[item_list] = pd.DataFrame(return_df['score_array'].tolist(), index= return_df.index)
+        return_df = return_df.drop('score_array',axis=1).reset_index().sort_values(by='user_id').reset_index(drop=True)
+
+        return return_df
     
 
     def create_combined_dataset_pred(self,u,seq,cand):
@@ -988,7 +989,7 @@ class SASREC(tf.keras.Model):
 
         inputs["users"] = np.expand_dims(np.array(u), axis=-1)
         inputs["input_seq"] = seq
-        inputs['candidate'] = np.expand_dims(cand, axis=-1)
+        inputs['candidate'] = np.array([cand])
 
         return inputs
     
@@ -1004,7 +1005,7 @@ class SASREC(tf.keras.Model):
         """
         training = False
         input_seq = inputs["input_seq"]
-        candidate = inputs["candidate"][0]
+        candidate = inputs["candidate"]
 
         mask = tf.expand_dims(tf.cast(tf.not_equal(input_seq, 0), tf.float32), -1)
         seq_embeddings, positional_embeddings = self.embedding(input_seq)
@@ -1018,6 +1019,7 @@ class SASREC(tf.keras.Model):
             seq_attention,
             [tf.shape(input_seq)[0] * self.seq_max_len, self.embedding_dim],
         )  # (b*s, d)
+        # print(candidate)
         candidate_emb = self.item_embedding_layer(candidate)  # (b, s, d)
         candidate_emb = tf.transpose(candidate_emb, perm=[0, 2, 1])  # (b, d, s)
 
