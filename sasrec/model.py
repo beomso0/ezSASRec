@@ -954,12 +954,10 @@ class SASREC(tf.keras.Model):
             ):
             
             u,seq,cand = sampler.next_batch()
-        
-            inputs = {}
-            inputs["input_seq"] = seq
-            inputs["candidate"] = cand
 
-            predictions = self.predict(inputs, len(items)-1)
+            inputs = self.create_combined_dataset_pred(u,seq,cand)
+
+            predictions = self.batch_predict(inputs, len(items)-1)
             predictions = np.array(predictions)
             predictions = predictions[0]
 
@@ -971,6 +969,63 @@ class SASREC(tf.keras.Model):
                 score_dict[u].append(pred)    
 
         return score_dict
+    
+
+    def create_combined_dataset_pred(self,u,seq,cand):
+        """
+        function to create model inputs from sampled batch data.
+        This function is used only during training.
+        """
+        inputs = {}
+        seq = tf.keras.preprocessing.sequence.pad_sequences(
+            seq, padding="pre", truncating="pre", maxlen=self.seq_max_len
+        )
+
+        inputs["users"] = np.expand_dims(np.array(u), axis=-1)
+        inputs["input_seq"] = seq
+        inputs['candidate'] = np.expand_dims(cand, axis=-1)
+
+        return inputs
+    
+
+    def batch_predict(self, inputs,neg_cand_n):
+        """Returns the logits for the test items.
+
+        Args:
+            inputs (tf.Tensor): Input tensor.
+            neg_cand_n: num of negative candidates
+        Returns:
+            tf.Tensor: Output tensor.
+        """
+        training = False
+        input_seq = inputs["input_seq"]
+        candidate = inputs["candidate"]
+
+        mask = tf.expand_dims(tf.cast(tf.not_equal(input_seq, 0), tf.float32), -1)
+        seq_embeddings, positional_embeddings = self.embedding(input_seq)
+        seq_embeddings += positional_embeddings
+        # seq_embeddings = self.dropout_layer(seq_embeddings)
+        seq_embeddings *= mask
+        seq_attention = seq_embeddings
+        seq_attention = self.encoder(seq_attention, training, mask)
+        seq_attention = self.layer_normalization(seq_attention)  # (b, s, d)
+        seq_emb = tf.reshape(
+            seq_attention,
+            [tf.shape(input_seq)[0] * self.seq_max_len, self.embedding_dim],
+        )  # (b*s, d)
+        candidate_emb = self.item_embedding_layer(candidate)  # (b, s, d)
+        candidate_emb = tf.transpose(candidate_emb, perm=[0, 2, 1])  # (b, d, s)
+
+        test_logits = tf.matmul(seq_emb, candidate_emb)
+        # (200, 100) * (1, 101, 100)'
+
+        test_logits = tf.reshape(
+            test_logits,
+            [tf.shape(input_seq)[0], self.seq_max_len, 1+neg_cand_n],
+        )  # (1, 50, 1+neg_can)
+        test_logits = test_logits[:, -1, :]  # (1, 101)
+        return test_logits
+
     
     def save(self,path, exp_name='sas_experiment'):
         
@@ -993,6 +1048,7 @@ class SASREC(tf.keras.Model):
             with open(path+exp_name+'/'+exp_name+'_save_log.txt','a') as f:
                 f.writelines(f'[epoch {self.epoch}] Best HR@10 score: {self.best_score}\n')
     
+
     def sample_val_users(self,dataset,target_user_n):
         usernum = dataset.usernum
         if usernum > target_user_n:

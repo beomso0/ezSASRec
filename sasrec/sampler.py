@@ -170,8 +170,8 @@ def predict_sample_function(
         
         user_id = mgr_user_list.pop()
         user = user_map_dict[user_id]
-        seq = tf.keras.preprocessing.sequence.pad_sequences([user_history[user]],padding="pre", truncating="pre", maxlen=max_len)
-        cand = np.array([[item_map_dict[i] for i in item_list]])
+        seq = user_history[user]
+        cand = [item_map_dict[i] for i in item_list]
 
         return (user_id, seq, cand)
 
