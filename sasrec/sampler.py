@@ -173,9 +173,10 @@ def predict_sample_function(
     while True:
         one_batch = []
         for i in range(batch_size):
-            if len(mgr_user_list)<=0:
-              break
-            one_batch.append(sample())
+            try:
+                one_batch.append(sample())
+            except IndexError:
+                break
 
         result_queue.put(zip(*one_batch))
         # print(len(mgr_user_list))
