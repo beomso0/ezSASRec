@@ -968,6 +968,8 @@ class SASREC(tf.keras.Model):
             for i in range(len(u)):
                 score_dict[u[i]].append(predictions[i])    
 
+            print('length of return: ',len(score_dict))
+
         return score_dict
     
 
@@ -1000,7 +1002,6 @@ class SASREC(tf.keras.Model):
         training = False
         input_seq = inputs["input_seq"]
         candidate = inputs["candidate"][0]
-        print(candidate)
 
         mask = tf.expand_dims(tf.cast(tf.not_equal(input_seq, 0), tf.float32), -1)
         seq_embeddings, positional_embeddings = self.embedding(input_seq)
