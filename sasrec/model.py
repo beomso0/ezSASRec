@@ -970,7 +970,7 @@ class SASREC(tf.keras.Model):
 
             print('length of return: ',len(score_dict))
             
-            if len(score_dict)>=user_id_list:
+            if len(score_dict)>=len(user_id_list):
                 sampler.close()
 
         return score_dict
