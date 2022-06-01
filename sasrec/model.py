@@ -999,7 +999,7 @@ class SASREC(tf.keras.Model):
         """
         training = False
         input_seq = inputs["input_seq"]
-        candidate = inputs["candidate"]
+        candidate = [inputs["candidate"]]
         print(candidate)
 
         mask = tf.expand_dims(tf.cast(tf.not_equal(input_seq, 0), tf.float32), -1)
