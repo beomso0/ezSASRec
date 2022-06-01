@@ -966,9 +966,12 @@ class SASREC(tf.keras.Model):
             # for i,v in enumerate(item_list):
             #     score_dict[v].append(predictions[i]) 
             for i in range(len(u)):
-                score_dict[u[i]].append(predictions[i])    
+                score_dict[u[i]]=predictions[i] 
 
             print('length of return: ',len(score_dict))
+            
+            if len(score_dict)>=user_id_list:
+                sampler.close()
 
         return score_dict
     
