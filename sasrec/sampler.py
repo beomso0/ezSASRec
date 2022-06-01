@@ -175,12 +175,14 @@ def predict_sample_function(
 
         return (user_id, seq, cand)
 
-    while len(mgr_user_list)>0:
+    while True:
         one_batch = []
         for i in range(batch_size):
             one_batch.append(sample())
 
         result_queue.put(zip(*one_batch))
+        if len(mgr_user_list)<=0:
+            break
 
 #%%
 # import numpy as np
