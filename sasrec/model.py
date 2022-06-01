@@ -960,15 +960,13 @@ class SASREC(tf.keras.Model):
             predictions = self.batch_predict(inputs, len(items)-1)
             predictions = np.array(predictions)
             # predictions = predictions[0]
-            print(predictions[0:10])
-            print(u[0:10])
 
             # pred_dict = {inv_item_map[v] : predictions[i] for i,v in enumerate(items)}
 
             # for i,v in enumerate(item_list):
             #     score_dict[v].append(predictions[i]) 
-            for pred in predictions:
-                score_dict[u].append(pred)    
+            for i in range(len(u)):
+                score_dict[u[i]].append(predictions[i])    
 
         return score_dict
     
