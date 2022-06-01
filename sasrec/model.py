@@ -947,7 +947,7 @@ class SASREC(tf.keras.Model):
         items = [item_map_dict[i] for i in item_list]
         # inv_user_map = {v: k for k, v in user_map_dict.items()}
         # inv_item_map = {v: k for k, v in item_map_dict.items()}  
-        score_dict = {i:[] for i in user_id_list}
+        score_dict = dict()
 
         for _ in tqdm(
                 range(num_steps), total=num_steps, ncols=70, leave=False, unit="b",
