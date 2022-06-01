@@ -898,7 +898,7 @@ class SASREC(tf.keras.Model):
 
         return return_dict
     
-    def get_user_item_score(self, dataset, user_map_dict,item_map_dict,user_id_list, item_list,is_test=False):
+    def old_get_user_item_score(self, dataset, user_map_dict,item_map_dict,user_id_list, item_list,is_test=False):
         all = dataset.User
         users = [user_map_dict[u] for u in user_id_list]
         items = [item_map_dict[i] for i in item_list]
@@ -943,45 +943,8 @@ class SASREC(tf.keras.Model):
 
         return return_df
         
-    def new_get_user_item_score(self,dataset,user_id_list, item_list,user_map_dict,item_map_dict,batch_size=128):
+    def get_user_item_score(self,dataset,user_id_list, item_list,user_map_dict,item_map_dict,batch_size=128):
 
-        # ORIGINAL
-
-        # num_steps = int(len(user_id_list)/batch_size)+1
-        # cand = [item_map_dict[i] for i in item_list]
-        # score_dict = dict()
-
-        # for _ in tqdm(
-        #         range(num_steps), total=num_steps, leave=True, unit="batch",
-        #     ):
-            
-        #     try:
-        #         u,seq = sampler.next_batch()  
-        #         print('u\n',u)          
-        #         print('seq\n',seq)          
-
-        #         inputs = self.create_combined_dataset_pred(u,seq,cand)
-        #         # print(inputs)
-
-        #         predictions = self.batch_predict(inputs, len(cand)-1)
-        #         predictions = np.array(predictions)
-
-        #         for i in range(len(u)):
-        #             score_dict[u[i]]=predictions[i] 
-            
-        #     except ValueError:
-        #         pass
-            
-        #     # if len(score_dict)>=len(user_id_list):
-        #     #     sampler.close()
-
-        # return_df = pd.DataFrame(list(score_dict.items()),columns = ['user_id','score_array']).set_index('user_id',drop=True)
-        # return_df[item_list] = pd.DataFrame(return_df['score_array'].tolist(), index= return_df.index)
-        # return_df = return_df.drop('score_array',axis=1).reset_index().sort_values(by='user_id').reset_index(drop=True)
-
-        # return return_df
-
-        # NEW
         if batch_size >= len(user_id_list):
             raise Exception('batch_size must be smaller than user_id_list size')
 
