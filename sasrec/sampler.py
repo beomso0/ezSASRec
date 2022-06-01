@@ -181,6 +181,7 @@ def predict_sample_function(
             one_batch.append(sample())
 
         result_queue.put(zip(*one_batch))
+        print(len(mgr_user_list))
         if len(mgr_user_list)<=0:
             break
 
