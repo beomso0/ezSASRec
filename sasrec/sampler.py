@@ -175,7 +175,7 @@ def predict_sample_function(
 
         return (user_id, seq, cand)
 
-    while True:
+    while len(mgr_user_list)>0:
         one_batch = []
         for i in range(batch_size):
             one_batch.append(sample())
