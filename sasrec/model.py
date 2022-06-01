@@ -943,34 +943,90 @@ class SASREC(tf.keras.Model):
 
         return return_df
         
-    def new_get_user_item_score(self, sampler,item_map_dict,user_id_list, item_list,batch_size=128):
+    def new_get_user_item_score(self,dataset,user_id_list, item_list,user_map_dict,item_map_dict,batch_size=128):
 
-        num_steps = int(len(user_id_list)/batch_size)
-        cand = [item_map_dict[i] for i in item_list]
-        score_dict = dict()
+        # ORIGINAL
 
-        for _ in tqdm(
-                range(num_steps), total=num_steps, leave=True, unit="batch",
-            ):
+        # num_steps = int(len(user_id_list)/batch_size)+1
+        # cand = [item_map_dict[i] for i in item_list]
+        # score_dict = dict()
+
+        # for _ in tqdm(
+        #         range(num_steps), total=num_steps, leave=True, unit="batch",
+        #     ):
             
-            try:
-                u,seq = sampler.next_batch()
-            except ValueError:
-                break
+        #     try:
+        #         u,seq = sampler.next_batch()  
+        #         print('u\n',u)          
+        #         print('seq\n',seq)          
 
-            inputs = self.create_combined_dataset_pred(u,seq,cand)
+        #         inputs = self.create_combined_dataset_pred(u,seq,cand)
+        #         # print(inputs)
+
+        #         predictions = self.batch_predict(inputs, len(cand)-1)
+        #         predictions = np.array(predictions)
+
+        #         for i in range(len(u)):
+        #             score_dict[u[i]]=predictions[i] 
+            
+        #     except ValueError:
+        #         pass
+            
+        #     # if len(score_dict)>=len(user_id_list):
+        #     #     sampler.close()
+
+        # return_df = pd.DataFrame(list(score_dict.items()),columns = ['user_id','score_array']).set_index('user_id',drop=True)
+        # return_df[item_list] = pd.DataFrame(return_df['score_array'].tolist(), index= return_df.index)
+        # return_df = return_df.drop('score_array',axis=1).reset_index().sort_values(by='user_id').reset_index(drop=True)
+
+        # return return_df
+
+        # NEW
+        if batch_size >= len(user_id_list):
+            raise Exception('batch_size must be smaller than user_id_list size')
+
+        user_history = dataset.User
+        inv_user_map = {v: k for k, v in user_map_dict.items()}
+        cand = [item_map_dict[i] for i in item_list]
+
+        if len(user_id_list)%batch_size ==0:
+            num_steps = int(len(user_id_list)/batch_size)
+        else:
+            num_steps = int(len(user_id_list)/batch_size) + 1
+        # num_steps = len(user_id_list)/batch_size
+        # num_steps = num_steps if num_steps%1 == 0 else int(num_steps)+1        
+        print(num_steps)
+        score_dict = dict()
+        
+        start_index=0
+
+        for step in tqdm(
+                range(num_steps), leave=True, unit="batch",
+            ):
+
+            # get user batch
+            u = user_id_list[start_index:start_index+batch_size] if step != num_steps-1 \
+                else user_id_list[start_index:]
+
+            start_index+=batch_size     
+            
+            u = [user_map_dict[user] for user in u] 
+
+            # get sequence batch
+            seq = [user_history[user] for user in u]
+
+            inputs = self.create_combined_dataset_pred(tuple(u),tuple(seq),cand)
             # print(inputs)
 
             predictions = self.batch_predict(inputs, len(cand)-1)
             predictions = np.array(predictions)
 
             for i in range(len(u)):
-                score_dict[u[i]]=predictions[i] 
-            
-            # if len(score_dict)>=len(user_id_list):
-            #     sampler.close()
+                score_dict[inv_user_map[u[i]]]=predictions[i] 
+
 
         return_df = pd.DataFrame(list(score_dict.items()),columns = ['user_id','score_array']).set_index('user_id',drop=True)
+        # print(return_df)
         return_df[item_list] = pd.DataFrame(return_df['score_array'].tolist(), index= return_df.index)
         return_df = return_df.drop('score_array',axis=1).reset_index().sort_values(by='user_id').reset_index(drop=True)
 

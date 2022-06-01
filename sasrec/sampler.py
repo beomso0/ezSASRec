@@ -170,6 +170,7 @@ def predict_sample_function(
 
         return (user_id, seq)
 
+    # original
     while True:
         one_batch = []
         for i in range(batch_size):
@@ -179,6 +180,7 @@ def predict_sample_function(
                 break
 
         result_queue.put(zip(*one_batch))
-        # print(len(mgr_user_list))
-        # if len(mgr_user_list)<=0:
-        #     break
+        print(len(mgr_user_list))
+        if len(mgr_user_list)<=0:
+            print('while loop break')
+            break
