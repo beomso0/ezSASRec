@@ -4,7 +4,7 @@
   <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>&lt;no title&gt; &mdash; custom_SASRec 0.4.1 documentation</title>
+  <title>Utilites to train and utilize SASRec &mdash; custom_SASRec 0.4.1 documentation</title>
       <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
   <!--[if lt IE 9]>
@@ -17,7 +17,8 @@
         <script src="_static/doctools.js"></script>
     <script src="_static/js/theme.js"></script>
     <link rel="index" title="Index" href="genindex.html" />
-    <link rel="search" title="Search" href="search.html" /> 
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="prev" title="SASRec algorithms and utilities" href="model.html" /> 
 </head>
 
 <body class="wy-body-for-nav"> 
@@ -39,9 +40,10 @@
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="quickstart.html">quickstart</a></li>
 </ul>
-<p class="caption" role="heading"><span class="caption-text">Model</span></p>
-<ul>
+<p class="caption" role="heading"><span class="caption-text">Model and Util</span></p>
+<ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="model.html">Model</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Util</a></li>
 </ul>
 
         </div>
@@ -58,7 +60,7 @@
           <div role="navigation" aria-label="Page navigation">
   <ul class="wy-breadcrumbs">
       <li><a href="index.html" class="icon icon-home"></a> &raquo;</li>
-      <li>&lt;no title&gt;</li>
+      <li>Utilites to train and utilize SASRec</li>
       <li class="wy-breadcrumbs-aside">
             <a href="_sources/util.rst.txt" rel="nofollow"> View page source</a>
       </li>
@@ -68,11 +70,197 @@
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
            <div itemprop="articleBody">
              
-  
+  <section id="utilites-to-train-and-utilize-sasrec">
+<h1>Utilites to train and utilize SASRec<a class="headerlink" href="#utilites-to-train-and-utilize-sasrec" title="Permalink to this headline"></a></h1>
+<span class="target" id="module-sasrec.util"></span><dl class="py class">
+<dt class="sig sig-object py" id="sasrec.util.SASRecDataSet">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">sasrec.util.</span></span><span class="sig-name descname"><span class="pre">SASRecDataSet</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">filename</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">col_sep</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'\t'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/sasrec/util.html#SASRecDataSet"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#sasrec.util.SASRecDataSet" title="Permalink to this definition"></a></dt>
+<dd><p>A class for creating SASRec specific dataset used during
+train, validation and testing.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>filename</strong> (<em>str</em>) – Data Filename.</p></li>
+<li><p><strong>col_sep</strong> (<em>str</em>) – column separator in the data file.</p></li>
+</ul>
+</dd>
+</dl>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="sasrec.util.SASRecDataSet.usernum">
+<span class="sig-name descname"><span class="pre">usernum</span></span><a class="headerlink" href="#sasrec.util.SASRecDataSet.usernum" title="Permalink to this definition"></a></dt>
+<dd><p>Total number of users.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type</dt>
+<dd class="field-odd"><p>int</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="sasrec.util.SASRecDataSet.itemnum">
+<span class="sig-name descname"><span class="pre">itemnum</span></span><a class="headerlink" href="#sasrec.util.SASRecDataSet.itemnum" title="Permalink to this definition"></a></dt>
+<dd><p>Total number of items.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type</dt>
+<dd class="field-odd"><p>int</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="sasrec.util.SASRecDataSet.User">
+<span class="sig-name descname"><span class="pre">User</span></span><a class="headerlink" href="#sasrec.util.SASRecDataSet.User" title="Permalink to this definition"></a></dt>
+<dd><p>All the users (keys) with items as values.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type</dt>
+<dd class="field-odd"><p>dict</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="sasrec.util.SASRecDataSet.Items">
+<span class="sig-name descname"><span class="pre">Items</span></span><a class="headerlink" href="#sasrec.util.SASRecDataSet.Items" title="Permalink to this definition"></a></dt>
+<dd><p>Set of all the items.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type</dt>
+<dd class="field-odd"><p>set</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="sasrec.util.SASRecDataSet.user_train">
+<span class="sig-name descname"><span class="pre">user_train</span></span><a class="headerlink" href="#sasrec.util.SASRecDataSet.user_train" title="Permalink to this definition"></a></dt>
+<dd><p>Subset of User that are used for training.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type</dt>
+<dd class="field-odd"><p>dict</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="sasrec.util.SASRecDataSet.user_valid">
+<span class="sig-name descname"><span class="pre">user_valid</span></span><a class="headerlink" href="#sasrec.util.SASRecDataSet.user_valid" title="Permalink to this definition"></a></dt>
+<dd><p>Subset of User that are used for validation.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type</dt>
+<dd class="field-odd"><p>dict</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="sasrec.util.SASRecDataSet.user_test">
+<span class="sig-name descname"><span class="pre">user_test</span></span><a class="headerlink" href="#sasrec.util.SASRecDataSet.user_test" title="Permalink to this definition"></a></dt>
+<dd><p>Subset of User that are used for testing.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type</dt>
+<dd class="field-odd"><p>dict</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="sasrec.util.SASRecDataSet.filename">
+<span class="sig-name descname"><span class="pre">filename</span></span><a class="headerlink" href="#sasrec.util.SASRecDataSet.filename" title="Permalink to this definition"></a></dt>
+<dd><p>Data Filename. Defaults to None.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type</dt>
+<dd class="field-odd"><p>str</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="sasrec.util.SASRecDataSet.col_sep">
+<span class="sig-name descname"><span class="pre">col_sep</span></span><a class="headerlink" href="#sasrec.util.SASRecDataSet.col_sep" title="Permalink to this definition"></a></dt>
+<dd><p>Column separator in the data file. Defaults to ‘/t’.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type</dt>
+<dd class="field-odd"><p>str</p>
+</dd>
+</dl>
+</dd></dl>
+
+<p class="rubric">Examples</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">data</span> <span class="o">=</span> <span class="n">SASRecDataSet</span><span class="p">(</span><span class="s1">&#39;filename&#39;</span><span class="p">,</span><span class="s1">&#39;/t&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="sasrec.util.filter_k_core">
+<span class="sig-prename descclassname"><span class="pre">sasrec.util.</span></span><span class="sig-name descname"><span class="pre">filter_k_core</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">core_num</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">col_user</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'userID'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">col_item</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'itemID'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/sasrec/util.html#filter_k_core"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#sasrec.util.filter_k_core" title="Permalink to this definition"></a></dt>
+<dd><p>Filter rating dataframe for minimum number of users and items by
+# repeatedly applying min_rating_filter until the condition is satisfied.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>data</strong> (<em>pd.DataFrame</em>) – DataFrame to filter.</p></li>
+<li><p><strong>core_num</strong> (<em>int</em><em>, </em><em>optional</em>) – Minimun number for user and item to appear on data. Defaults to 0.</p></li>
+<li><p><strong>col_user</strong> (<em>str</em><em>, </em><em>optional</em>) – User column name. Defaults to “userID”.</p></li>
+<li><p><strong>col_item</strong> (<em>str</em><em>, </em><em>optional</em>) – Item column name. Defaults to “itemID”.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><strong>pd.DataFrame</strong> – Filtered dataframe</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="sasrec.util.load_model">
+<span class="sig-prename descclassname"><span class="pre">sasrec.util.</span></span><span class="sig-name descname"><span class="pre">load_model</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">path</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">exp_name</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'sas_experiment'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/sasrec/util.html#load_model"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#sasrec.util.load_model" title="Permalink to this definition"></a></dt>
+<dd><p>Load SASRec model</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>path</strong> (<em>str</em>) – Path where the model is saved.</p></li>
+<li><p><strong>exp_name</strong> (<em>str</em><em>, </em><em>optional</em>) – Experiment name (folder name). Defaults to ‘sas_experiment’.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><strong>model.SASREC</strong> – loaded SASRec model</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="sasrec.util.min_rating_filter_pandas">
+<span class="sig-prename descclassname"><span class="pre">sasrec.util.</span></span><span class="sig-name descname"><span class="pre">min_rating_filter_pandas</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">min_rating</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">filter_by</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'user'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">col_user</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'userID'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">col_item</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'itemID'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/sasrec/util.html#min_rating_filter_pandas"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#sasrec.util.min_rating_filter_pandas" title="Permalink to this definition"></a></dt>
+<dd><p>Filter rating DataFrame for each user with minimum rating.</p>
+<p>Filter rating data frame with minimum number of ratings for user/item is usually useful to
+generate a new data frame with warm user/item. The warmth is defined by min_rating argument. For
+example, a user is called warm if he has rated at least 4 items.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>data</strong> (<em>pd.DataFrame</em>) – DataFrame of user-item tuples. Columns of user and item
+should be present in the DataFrame while other columns like rating,
+timestamp, etc. can be optional.</p></li>
+<li><p><strong>min_rating</strong> (<em>int</em>) – Minimum number of ratings for user or item.</p></li>
+<li><p><strong>filter_by</strong> (<em>str</em>) – Either “user” or “item”, depending on which of the two is to
+filter with min_rating.</p></li>
+<li><p><strong>col_user</strong> (<em>str</em>) – Column name of user ID.</p></li>
+<li><p><strong>col_item</strong> (<em>str</em>) – Column name of item ID.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><strong>pandas.DataFrame</strong> – DataFrame with at least columns of user and item that has been filtered by the given specifications.</p>
+</dd>
+</dl>
+</dd></dl>
+
+</section>
+
 
            </div>
           </div>
-          <footer>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="model.html" class="btn btn-neutral float-left" title="SASRec algorithms and utilities" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+    </div>
 
   <hr/>
 

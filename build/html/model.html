@@ -18,6 +18,7 @@
     <script src="_static/js/theme.js"></script>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Utilites to train and utilize SASRec" href="util.html" />
     <link rel="prev" title="quickstart" href="quickstart.html" /> 
 </head>
 
@@ -40,12 +41,10 @@
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="quickstart.html">quickstart</a></li>
 </ul>
-<p class="caption" role="heading"><span class="caption-text">Model</span></p>
+<p class="caption" role="heading"><span class="caption-text">Model and Util</span></p>
 <ul class="current">
-<li class="toctree-l1 current"><a class="current reference internal" href="#">Model</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="#module-sasrec.model">Mdoel</a></li>
-</ul>
-</li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Model</a></li>
+<li class="toctree-l1"><a class="reference internal" href="util.html">Util</a></li>
 </ul>
 
         </div>
@@ -74,9 +73,7 @@
              
   <section id="sasrec-algorithms-and-utilities">
 <span id="recommender"></span><h1>SASRec algorithms and utilities<a class="headerlink" href="#sasrec-algorithms-and-utilities" title="Permalink to this headline"></a></h1>
-<section id="module-sasrec.model">
-<span id="mdoel"></span><h2>Mdoel<a class="headerlink" href="#module-sasrec.model" title="Permalink to this headline"></a></h2>
-<dl class="py class">
+<span class="target" id="module-sasrec.model"></span><dl class="py class">
 <dt class="sig sig-object py" id="sasrec.model.Encoder">
 <em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">sasrec.model.</span></span><span class="sig-name descname"><span class="pre">Encoder</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/sasrec/model.html#Encoder"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#sasrec.model.Encoder" title="Permalink to this definition"></a></dt>
 <dd><p>Invokes Transformer based encoder with user defined number of layers</p>
@@ -106,7 +103,7 @@
 </ul>
 </dd>
 <dt class="field-even">Returns</dt>
-<dd class="field-even"><p><strong>tf.Tensor</strong> – Output tensor.</p>
+<dd class="field-even"><p><strong>tf.Tensor</strong> – Output tensor</p>
 </dd>
 </dl>
 </dd></dl>
@@ -142,7 +139,7 @@
 </ul>
 </dd>
 <dt class="field-even">Returns</dt>
-<dd class="field-even"><p><strong>tf.Tensor</strong> – Output tensor.</p>
+<dd class="field-even"><p><strong>tf.Tensor</strong> – Output tensor</p>
 </dd>
 </dl>
 </dd></dl>
@@ -160,7 +157,7 @@
 </ul>
 </dd>
 <dt class="field-even">Returns</dt>
-<dd class="field-even"><p><strong>tf.Tensor</strong> – Output tensor.</p>
+<dd class="field-even"><p><strong>tf.Tensor</strong> – Output tensor</p>
 </dd>
 </dl>
 </dd></dl>
@@ -190,7 +187,7 @@ gamma and beta are the learnable parameters</p>
 <dd class="field-odd"><p><strong>x</strong> (<em>tf.Tensor</em>) – Input tensor.</p>
 </dd>
 <dt class="field-even">Returns</dt>
-<dd class="field-even"><p><strong>tf.Tensor</strong> – Output tensor.</p>
+<dd class="field-even"><p><strong>tf.Tensor</strong> – Output tensor</p>
 </dd>
 </dl>
 </dd></dl>
@@ -226,7 +223,7 @@ gamma and beta are the learnable parameters</p>
 </ul>
 </dd>
 <dt class="field-even">Returns</dt>
-<dd class="field-even"><p><strong>tf.Tensor</strong> – Output tensor.</p>
+<dd class="field-even"><p><strong>tf.Tensor</strong> – Output tensor</p>
 </dd>
 </dl>
 </dd></dl>
@@ -254,7 +251,7 @@ gamma and beta are the learnable parameters</p>
 <dd class="field-odd"><p><strong>x</strong> (<em>tf.Tensor</em>) – Input tensor.</p>
 </dd>
 <dt class="field-even">Returns</dt>
-<dd class="field-even"><p><strong>tf.Tensor</strong> – Output tensor.</p>
+<dd class="field-even"><p><strong>tf.Tensor</strong> – Output tensor</p>
 </dd>
 </dl>
 </dd></dl>
@@ -326,7 +323,7 @@ Data Mining (ICDM’18)</p>
 <dd><p>Train history containing epoch, <a class="reference external" href="mailto:NDCG&#37;&#52;&#48;10">NDCG<span>&#64;</span>10</a>, and <a class="reference external" href="mailto:HR&#37;&#52;&#48;10">HR<span>&#64;</span>10</a>.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Type</dt>
-<dd class="field-odd"><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">pandas.DataFrame</span></code></p>
+<dd class="field-odd"><p>pd.DataFrame</p>
 </dd>
 </dl>
 </dd></dl>
@@ -343,7 +340,7 @@ Data Mining (ICDM’18)</p>
 </ul>
 </dd>
 <dt class="field-even">Returns</dt>
-<dd class="field-even"><p><strong>tf.Tensor</strong> – Output tensor.</p>
+<dd class="field-even"><p><strong>tf.Tensor</strong> – Output tensor</p>
 </dd>
 </dl>
 </dd></dl>
@@ -361,10 +358,9 @@ Data Mining (ICDM’18)</p>
 </dd>
 <dt class="field-even">Returns</dt>
 <dd class="field-even"><ul class="simple">
-<li><p><strong>tf.Tensor, tf.Tensor, tf.Tensor</strong></p></li>
-<li><p><strong>- Logits of the positive examples.</strong></p></li>
-<li><p><strong>- Logits of the negative examples.</strong></p></li>
-<li><p><strong>- Mask for nonzero targets</strong></p></li>
+<li><p><strong>tf.Tensor</strong> – Logits of the positive examples</p></li>
+<li><p><strong>tf.Tensor</strong> – Logits of the negative examples</p></li>
+<li><p><strong>tf.Tensor</strong> – Mask for nonzero targets</p></li>
 </ul>
 </dd>
 </dl>
@@ -394,9 +390,8 @@ This function is used during predicting on batch.</p>
 </dd>
 <dt class="field-even">Returns</dt>
 <dd class="field-even"><ul class="simple">
-<li><p><strong>tf.Tensor, tf.Tensor</strong></p></li>
-<li><p><strong>- Sequence embeddings.</strong></p></li>
-<li><p><strong>- Positional embeddings.</strong></p></li>
+<li><p><strong>tf.Tensor</strong> – Sequence embeddings</p></li>
+<li><p><strong>tf.Tensor</strong> – Positional embeddings</p></li>
 </ul>
 </dd>
 </dl>
@@ -418,8 +413,8 @@ This function is used during predicting on batch.</p>
 </dd>
 <dt class="field-even">Returns</dt>
 <dd class="field-even"><ul class="simple">
-<li><p><strong>NDCG&#64;k</strong> (<em>float</em>)</p></li>
-<li><p><strong>HR&#64;k</strong> (<em>float</em>)</p></li>
+<li><p><strong>float</strong> – NDCG&#64;k</p></li>
+<li><p><strong>float</strong> – HR&#64;k</p></li>
 </ul>
 </dd>
 </dl>
@@ -441,10 +436,10 @@ This function is used during predicting on batch.</p>
 </ul>
 </dd>
 <dt class="field-even">Raises</dt>
-<dd class="field-even"><p><strong>Exception</strong> – Batch_size must be smaller than user_id_list size.</p>
+<dd class="field-even"><p><strong>Exception</strong> – Batch_size must be smaller than user id list size.</p>
 </dd>
 <dt class="field-odd">Returns</dt>
-<dd class="field-odd"><p><strong>:obj:`pandas.DataFrame`</strong></p>
+<dd class="field-odd"><p><strong>pd.DataFrame</strong> – user-item score</p>
 </dd>
 </dl>
 </dd></dl>
@@ -464,7 +459,7 @@ take care of the zero items (added for padding).</p>
 </ul>
 </dd>
 <dt class="field-even">Returns</dt>
-<dd class="field-even"><p><strong>float</strong> – Loss.</p>
+<dd class="field-even"><p><strong>float</strong> – loss</p>
 </dd>
 </dl>
 </dd></dl>
@@ -487,7 +482,7 @@ take care of the zero items (added for padding).</p>
 </ul>
 </dd>
 <dt class="field-even">Returns</dt>
-<dd class="field-even"><p><strong>tf.Tensor</strong> – Output tensor.</p>
+<dd class="field-even"><p><strong>tf.Tensor</strong> – Output tensor</p>
 </dd>
 </dl>
 </dd></dl>
@@ -509,7 +504,7 @@ take care of the zero items (added for padding).</p>
 </ul>
 </dd>
 <dt class="field-even">Returns</dt>
-<dd class="field-even"><p><strong>:obj:`pandas.DataFrame`</strong></p>
+<dd class="field-even"><p><strong>pd.DataFrame</strong> – recommended items for users</p>
 </dd>
 </dl>
 </dd></dl>
@@ -572,13 +567,13 @@ take care of the zero items (added for padding).</p>
 </dd></dl>
 
 </section>
-</section>
 
 
            </div>
           </div>
           <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
         <a href="quickstart.html" class="btn btn-neutral float-left" title="quickstart" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="util.html" class="btn btn-neutral float-right" title="Utilites to train and utilize SASRec" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
     </div>
 
   <hr/>

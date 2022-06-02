@@ -4,23 +4,29 @@ import os
 from .model import SASREC
 
 class SASRecDataSet:
-    """
-    A class for creating SASRec specific dataset used during
-    train, validation and testing.
+    """A class for creating SASRec specific dataset used during
+    train, validation and testing.    
+
+    Args:
+        filename (str): Data Filename.
+        col_sep (str): column separator in the data file.
 
     Attributes:
-        usernum: integer, total number of users
-        itemnum: integer, total number of items
-        User: dict, all the users (keys) with items as values
-        Items: set of all the items
-        user_train: dict, subset of User that are used for training
-        user_valid: dict, subset of User that are used for validation
-        user_test: dict, subset of User that are used for testing
-        col_sep: column separator in the data file
-        filename: data filename
+        usernum (int): Total number of users.
+        itemnum (int): Total number of items.
+        User (dict): All the users (keys) with items as values.
+        Items (set): Set of all the items.
+        user_train (dict): Subset of User that are used for training.
+        user_valid (dict): Subset of User that are used for validation.
+        user_test (dict): Subset of User that are used for testing.
+        filename (str): Data Filename. Defaults to None.
+        col_sep (str): Column separator in the data file. Defaults to '/t'.
+
+    Examples:
+        >>> data = SASRecDataSet('filename','/t')
     """
 
-    def __init__(self, **kwargs):
+    def __init__(self, filename=None, col_sep='\t'):
         self.usernum = 0
         self.itemnum = 0
         self.User = defaultdict(list)
@@ -28,8 +34,8 @@ class SASRecDataSet:
         self.user_train = {}
         self.user_valid = {}
         self.user_test = {}
-        self.col_sep = kwargs.get("col_sep", " ")
-        self.filename = kwargs.get("filename", None)
+        self.filename = filename
+        self.col_sep = col_sep
 
         if self.filename:
             with open(self.filename, "r") as fr:
@@ -105,6 +111,7 @@ class SASRecDataSet:
                 self.user_test[user] = []
                 self.user_test[user].append(self.User[user][-1])
 
+
 def _get_column_name(name, col_user, col_item):
     if name == "user":
         return col_user
@@ -112,6 +119,7 @@ def _get_column_name(name, col_user, col_item):
         return col_item
     else:
         raise ValueError("name should be either 'user' or 'item'.")
+
 
 def min_rating_filter_pandas(
     data,
@@ -127,14 +135,14 @@ def min_rating_filter_pandas(
     example, a user is called warm if he has rated at least 4 items.
 
     Args:
-        data (pandas.DataFrame): DataFrame of user-item tuples. Columns of user and item
+        data (pd.DataFrame): DataFrame of user-item tuples. Columns of user and item
             should be present in the DataFrame while other columns like rating,
             timestamp, etc. can be optional.
-        min_rating (int): minimum number of ratings for user or item.
-        filter_by (str): either "user" or "item", depending on which of the two is to
+        min_rating (int): Minimum number of ratings for user or item.
+        filter_by (str): Either "user" or "item", depending on which of the two is to
             filter with min_rating.
-        col_user (str): column name of user ID.
-        col_item (str): column name of item ID.
+        col_user (str): Column name of user ID.
+        col_item (str): Column name of item ID.
 
     Returns:
         pandas.DataFrame: DataFrame with at least columns of user and item that has been filtered by the given specifications.
@@ -147,10 +155,21 @@ def min_rating_filter_pandas(
     return data.groupby(split_by_column).filter(lambda x: len(x) >= min_rating)
 
 def filter_k_core(data, core_num=0, col_user="userID", col_item="itemID"):
-    """Filter rating dataframe for minimum number of users and items by
-    repeatedly applying min_rating_filter until the condition is satisfied.
 
+    """Filter rating dataframe for minimum number of users and items by
+    # repeatedly applying min_rating_filter until the condition is satisfied.
+
+    Args:
+        data (pd.DataFrame): DataFrame to filter.
+        core_num (int, optional): Minimun number for user and item to appear on data. Defaults to 0.
+        col_user (str, optional): User column name. Defaults to "userID".
+        col_item (str, optional): Item column name. Defaults to "itemID".
+
+    Returns:
+        pd.DataFrame: Filtered dataframe
     """
+
+    
     num_users, num_items = data[col_user].nunique(), data[col_item].nunique()
     print(f"Original: {num_users} users and {num_items} items")
     df_inp = data.copy()
@@ -178,6 +197,15 @@ def filter_k_core(data, core_num=0, col_user="userID", col_item="itemID"):
     return df_inp
 
 def load_model(path, exp_name='sas_experiment'):
+    """Load SASRec model
+
+    Args:
+        path (str): Path where the model is saved.
+        exp_name (str, optional): Experiment name (folder name). Defaults to 'sas_experiment'.
+
+    Returns:
+        model.SASREC: loaded SASRec model
+    """
     with open(path+exp_name+'/'+exp_name+'_model_args','rb') as f:
         arg_dict = pickle.load(f)
     
@@ -195,4 +223,5 @@ def load_model(path, exp_name='sas_experiment'):
                     history=arg_dict['history'],
         )
     model.load_weights(path+exp_name+'/'+exp_name+'_weights')
+    
     return model

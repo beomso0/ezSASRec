@@ -14,16 +14,10 @@ Welcome to custom_SASRec's documentation!
 
 .. toctree::
    :maxdepth: 2
-   :caption: Model
+   :caption: Model and Util
 
-   .. model.md
    Model <model.rst>
-
-.. toctree::
-   :maxdepth: 2
-   :caption: Util
-
-   .. util.md
+   Util <util.rst>
 
 Indices and tables
 ==================

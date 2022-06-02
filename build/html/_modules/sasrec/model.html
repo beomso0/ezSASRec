@@ -38,9 +38,10 @@
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../../quickstart.html">quickstart</a></li>
 </ul>
-<p class="caption" role="heading"><span class="caption-text">Model</span></p>
+<p class="caption" role="heading"><span class="caption-text">Model and Util</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../../model.html">Model</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../util.html">Util</a></li>
 </ul>
 
         </div>
@@ -114,7 +115,7 @@
 <span class="sd">            keys (tf.Tensor): Tensor of keys</span>
 
 <span class="sd">        Returns:</span>
-<span class="sd">            tf.Tensor: Output tensor.</span>
+<span class="sd">            tf.Tensor: Output tensor</span>
 <span class="sd">        &quot;&quot;&quot;</span>
 
         <span class="c1"># Linear projections</span>
@@ -216,7 +217,7 @@
 <span class="sd">            x (tf.Tensor): Input tensor.</span>
 
 <span class="sd">        Returns:</span>
-<span class="sd">            tf.Tensor: Output tensor.</span>
+<span class="sd">            tf.Tensor: Output tensor</span>
 <span class="sd">        &quot;&quot;&quot;</span>
 
         <span class="n">output</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">conv_layer1</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
@@ -284,7 +285,7 @@
 <span class="sd">            mask (tf.Tensor): Mask tensor.</span>
 
 <span class="sd">        Returns:</span>
-<span class="sd">            tf.Tensor: Output tensor.</span>
+<span class="sd">            tf.Tensor: Output tensor</span>
 <span class="sd">        &quot;&quot;&quot;</span>
 
         <span class="n">attn_output</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">mha</span><span class="p">(</span><span class="n">queries</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">layer_normalization</span><span class="p">(</span><span class="n">x</span><span class="p">),</span> <span class="n">keys</span><span class="o">=</span><span class="n">x</span><span class="p">)</span>
@@ -312,7 +313,7 @@
 <span class="sd">            mask (tf.Tensor): Mask tensor.</span>
 
 <span class="sd">        Returns:</span>
-<span class="sd">            tf.Tensor: Output tensor.</span>
+<span class="sd">            tf.Tensor: Output tensor</span>
 <span class="sd">        &quot;&quot;&quot;</span>
 
         <span class="n">x_norm</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">layer_normalization</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
@@ -378,7 +379,7 @@
 <span class="sd">            mask (tf.Tensor): Mask tensor.</span>
 
 <span class="sd">        Returns:</span>
-<span class="sd">            tf.Tensor: Output tensor.</span>
+<span class="sd">            tf.Tensor: Output tensor</span>
 <span class="sd">        &quot;&quot;&quot;</span>
 
         <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">num_layers</span><span class="p">):</span>
@@ -429,7 +430,7 @@
 <span class="sd">            x (tf.Tensor): Input tensor.</span>
 
 <span class="sd">        Returns:</span>
-<span class="sd">            tf.Tensor: Output tensor.</span>
+<span class="sd">            tf.Tensor: Output tensor</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">mean</span><span class="p">,</span> <span class="n">variance</span> <span class="o">=</span> <span class="n">tf</span><span class="o">.</span><span class="n">nn</span><span class="o">.</span><span class="n">moments</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">],</span> <span class="n">keepdims</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
         <span class="n">normalized</span> <span class="o">=</span> <span class="p">(</span><span class="n">x</span> <span class="o">-</span> <span class="n">mean</span><span class="p">)</span> <span class="o">/</span> <span class="p">((</span><span class="n">variance</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">epsilon</span><span class="p">)</span> <span class="o">**</span> <span class="mf">0.5</span><span class="p">)</span>
@@ -464,7 +465,7 @@
 <span class="sd">        epoch (int): Epoch of trained model.</span>
 <span class="sd">        best_score (float): Best validation HR@10 score while training.</span>
 <span class="sd">        val_users (list): User list for validation.</span>
-<span class="sd">        history (:obj:`pandas.DataFrame`): Train history containing epoch, NDCG@10, and HR@10.</span>
+<span class="sd">        history (pd.DataFrame): Train history containing epoch, NDCG@10, and HR@10.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
@@ -523,9 +524,8 @@
 <span class="sd">            input_seq (tf.Tensor): Input sequence</span>
 
 <span class="sd">        Returns:</span>
-<span class="sd">            tf.Tensor, tf.Tensor:</span>
-<span class="sd">            - Sequence embeddings.</span>
-<span class="sd">            - Positional embeddings.</span>
+<span class="sd">            tf.Tensor: Sequence embeddings</span>
+<span class="sd">            tf.Tensor: Positional embeddings</span>
 <span class="sd">        &quot;&quot;&quot;</span>
 
         <span class="n">seq_embeddings</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">item_embedding_layer</span><span class="p">(</span><span class="n">input_seq</span><span class="p">)</span>
@@ -546,10 +546,9 @@
 <span class="sd">            training (tf.Tensor): Training tensor.</span>
 
 <span class="sd">        Returns:</span>
-<span class="sd">            tf.Tensor, tf.Tensor, tf.Tensor:</span>
-<span class="sd">            - Logits of the positive examples.</span>
-<span class="sd">            - Logits of the negative examples.</span>
-<span class="sd">            - Mask for nonzero targets</span>
+<span class="sd">            tf.Tensor: Logits of the positive examples</span>
+<span class="sd">            tf.Tensor: Logits of the negative examples</span>
+<span class="sd">            tf.Tensor: Mask for nonzero targets</span>
 <span class="sd">        &quot;&quot;&quot;</span>
 
         <span class="n">input_seq</span> <span class="o">=</span> <span class="n">x</span><span class="p">[</span><span class="s2">&quot;input_seq&quot;</span><span class="p">]</span>
@@ -613,7 +612,7 @@
 <span class="sd">            inputs (tf.Tensor): Input tensor.</span>
 <span class="sd">            neg_cand_n: num of negative candidates</span>
 <span class="sd">        Returns:</span>
-<span class="sd">             tf.Tensor: Output tensor.</span>
+<span class="sd">            tf.Tensor:Output tensor</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">training</span> <span class="o">=</span> <span class="kc">False</span>
         <span class="n">input_seq</span> <span class="o">=</span> <span class="n">inputs</span><span class="p">[</span><span class="s2">&quot;input_seq&quot;</span><span class="p">]</span>
@@ -656,7 +655,7 @@
 <span class="sd">            istarget (tf.Tensor): Mask for nonzero targets.</span>
 
 <span class="sd">        Returns:</span>
-<span class="sd">            float: Loss.</span>
+<span class="sd">            float: loss</span>
 <span class="sd">        &quot;&quot;&quot;</span>
 
         <span class="n">pos_logits</span> <span class="o">=</span> <span class="n">pos_logits</span><span class="p">[:,</span> <span class="mi">0</span><span class="p">]</span>
@@ -827,8 +826,8 @@
 <span class="sd">            is_val (bool, optional): If true, evaluate on validation set. If False, evaluate on test set. Defaults to False.</span>
 
 <span class="sd">        Returns:</span>
-<span class="sd">            NDCG@k (float)</span>
-<span class="sd">            HR@k (float)</span>
+<span class="sd">            float: NDCG@k</span>
+<span class="sd">            float: HR@k</span>
 <span class="sd">        &quot;&quot;&quot;</span>
 
         <span class="n">usernum</span> <span class="o">=</span> <span class="n">dataset</span><span class="o">.</span><span class="n">usernum</span>
@@ -924,7 +923,7 @@
 <span class="sd">            is_test (bool, optional): If true, exclude the last item from each user&#39;s sequence. Defaults to False.</span>
 
 <span class="sd">        Returns:</span>
-<span class="sd">            :obj:`pandas.DataFrame`</span>
+<span class="sd">            pd.DataFrame: recommended items for users</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="nb">all</span> <span class="o">=</span> <span class="n">dataset</span><span class="o">.</span><span class="n">User</span>
         <span class="n">itemnum</span> <span class="o">=</span> <span class="n">dataset</span><span class="o">.</span><span class="n">itemnum</span>
@@ -1048,10 +1047,10 @@
 <span class="sd">            batch_size (int, optional): Batch size. Defaults to 128.</span>
 
 <span class="sd">        Raises:</span>
-<span class="sd">            Exception: Batch_size must be smaller than user_id_list size.</span>
+<span class="sd">            Exception: Batch_size must be smaller than user id list size.</span>
 
 <span class="sd">        Returns:</span>
-<span class="sd">            :obj:`pandas.DataFrame`</span>
+<span class="sd">            pd.DataFrame: user-item score</span>
 <span class="sd">        &quot;&quot;&quot;</span>
 
         <span class="k">if</span> <span class="n">batch_size</span> <span class="o">&gt;=</span> <span class="nb">len</span><span class="p">(</span><span class="n">user_id_list</span><span class="p">):</span>
@@ -1130,7 +1129,7 @@
 <span class="sd">            cand_n (int): Num of candidates.</span>
 
 <span class="sd">        Returns:</span>
-<span class="sd">            tf.Tensor: Output tensor.</span>
+<span class="sd">            tf.Tensor: Output tensor</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">training</span> <span class="o">=</span> <span class="kc">False</span>
         <span class="n">input_seq</span> <span class="o">=</span> <span class="n">inputs</span><span class="p">[</span><span class="s2">&quot;input_seq&quot;</span><span class="p">]</span>

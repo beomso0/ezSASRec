@@ -44,7 +44,7 @@ class MultiHeadAttention(tf.keras.layers.Layer):
             keys (tf.Tensor): Tensor of keys
 
         Returns:
-            tf.Tensor: Output tensor.
+            tf.Tensor: Output tensor
         """
 
         # Linear projections
@@ -146,7 +146,7 @@ class PointWiseFeedForward(tf.keras.layers.Layer):
             x (tf.Tensor): Input tensor.
 
         Returns:
-            tf.Tensor: Output tensor.
+            tf.Tensor: Output tensor
         """
 
         output = self.conv_layer1(x)
@@ -214,7 +214,7 @@ class EncoderLayer(tf.keras.layers.Layer):
             mask (tf.Tensor): Mask tensor.
 
         Returns:
-            tf.Tensor: Output tensor.
+            tf.Tensor: Output tensor
         """
 
         attn_output = self.mha(queries=self.layer_normalization(x), keys=x)
@@ -242,7 +242,7 @@ class EncoderLayer(tf.keras.layers.Layer):
             mask (tf.Tensor): Mask tensor.
 
         Returns:
-            tf.Tensor: Output tensor.
+            tf.Tensor: Output tensor
         """
 
         x_norm = self.layer_normalization(x)
@@ -308,7 +308,7 @@ class Encoder(tf.keras.layers.Layer):
             mask (tf.Tensor): Mask tensor.
 
         Returns:
-            tf.Tensor: Output tensor.
+            tf.Tensor: Output tensor
         """
 
         for i in range(self.num_layers):
@@ -359,7 +359,7 @@ class LayerNormalization(tf.keras.layers.Layer):
             x (tf.Tensor): Input tensor.
 
         Returns:
-            tf.Tensor: Output tensor.
+            tf.Tensor: Output tensor
         """
         mean, variance = tf.nn.moments(x, [-1], keepdims=True)
         normalized = (x - mean) / ((variance + self.epsilon) ** 0.5)
@@ -394,7 +394,7 @@ class SASREC(tf.keras.Model):
         epoch (int): Epoch of trained model.
         best_score (float): Best validation HR@10 score while training.
         val_users (list): User list for validation.
-        history (:obj:`pandas.DataFrame`): Train history containing epoch, NDCG@10, and HR@10.
+        history (pd.DataFrame): Train history containing epoch, NDCG@10, and HR@10.
     """
     
     def __init__(self, **kwargs):
@@ -453,9 +453,8 @@ class SASREC(tf.keras.Model):
             input_seq (tf.Tensor): Input sequence
 
         Returns:
-            tf.Tensor, tf.Tensor:
-            - Sequence embeddings.
-            - Positional embeddings.
+            tf.Tensor: Sequence embeddings
+            tf.Tensor: Positional embeddings
         """
 
         seq_embeddings = self.item_embedding_layer(input_seq)
@@ -476,10 +475,9 @@ class SASREC(tf.keras.Model):
             training (tf.Tensor): Training tensor.
 
         Returns:
-            tf.Tensor, tf.Tensor, tf.Tensor:
-            - Logits of the positive examples.
-            - Logits of the negative examples.
-            - Mask for nonzero targets
+            tf.Tensor: Logits of the positive examples
+            tf.Tensor: Logits of the negative examples
+            tf.Tensor: Mask for nonzero targets
         """
 
         input_seq = x["input_seq"]
@@ -543,7 +541,7 @@ class SASREC(tf.keras.Model):
             inputs (tf.Tensor): Input tensor.
             neg_cand_n: num of negative candidates
         Returns:
-             tf.Tensor: Output tensor.
+            tf.Tensor:Output tensor
         """
         training = False
         input_seq = inputs["input_seq"]
@@ -586,7 +584,7 @@ class SASREC(tf.keras.Model):
             istarget (tf.Tensor): Mask for nonzero targets.
 
         Returns:
-            float: Loss.
+            float: loss
         """
 
         pos_logits = pos_logits[:, 0]
@@ -757,8 +755,8 @@ class SASREC(tf.keras.Model):
             is_val (bool, optional): If true, evaluate on validation set. If False, evaluate on test set. Defaults to False.
 
         Returns:
-            NDCG@k (float)
-            HR@k (float)
+            float: NDCG@k
+            float: HR@k
         """
 
         usernum = dataset.usernum
@@ -854,7 +852,7 @@ class SASREC(tf.keras.Model):
             is_test (bool, optional): If true, exclude the last item from each user's sequence. Defaults to False.
 
         Returns:
-            :obj:`pandas.DataFrame`
+            pd.DataFrame: recommended items for users
         """
         all = dataset.User
         itemnum = dataset.itemnum
@@ -978,10 +976,10 @@ class SASREC(tf.keras.Model):
             batch_size (int, optional): Batch size. Defaults to 128.
 
         Raises:
-            Exception: Batch_size must be smaller than user_id_list size.
+            Exception: Batch_size must be smaller than user id list size.
 
         Returns:
-            :obj:`pandas.DataFrame`
+            pd.DataFrame: user-item score
         """
 
         if batch_size >= len(user_id_list):
@@ -1060,7 +1058,7 @@ class SASREC(tf.keras.Model):
             cand_n (int): Num of candidates.
 
         Returns:
-            tf.Tensor: Output tensor.
+            tf.Tensor: Output tensor
         """
         training = False
         input_seq = inputs["input_seq"]
