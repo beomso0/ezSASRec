@@ -1,5 +1,5 @@
 # **SASRec**
-
+<!-- 
 ## Introduction
 This repository contains tools to train, evaluate and save SASRec model.
 - - - 
@@ -103,9 +103,4 @@ save and load SASRec model
 - parameters
   - path: 파일**들**이 저장된 경로
   - exp_name: 실험(모델) 이름
-    - save 시 지정한 suffix
-
-
-# Todo
-- revise SASRecDATASET
-- revise **predict**
+    - save 시 지정한 suffix -->
