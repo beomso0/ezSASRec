@@ -430,8 +430,8 @@ This function is used during predicting on batch.</p>
 <li><p><strong>dataset</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">SASRecDataSet</span></code>) – SASRecDataSet containing users-item interaction history.</p></li>
 <li><p><strong>user_id_list</strong> (<em>list</em>) – User list to predict.</p></li>
 <li><p><strong>item_list</strong> (<em>list</em>) – Item list to predict</p></li>
-<li><p><strong>user_map_dict</strong> (<em>dict</em>) – Dict { user_id : encoded user label , … }</p></li>
-<li><p><strong>item_map_dict</strong> (<em>dict</em>) – Dict { item : encoded item label , … }</p></li>
+<li><p><strong>user_map_dict</strong> (<em>dict</em>) – Dict { user_id : encoded_user_label , … }</p></li>
+<li><p><strong>item_map_dict</strong> (<em>dict</em>) – Dict { item : encoded_item_label , … }</p></li>
 <li><p><strong>batch_size</strong> (<em>int</em><em>, </em><em>optional</em>) – Batch size. Defaults to 128.</p></li>
 </ul>
 </dd>
@@ -495,7 +495,7 @@ take care of the zero items (added for padding).</p>
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>dataset</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">util.SASRecDataSet</span></code>) – SASRecDataSet containing users-item interaction history.</p></li>
-<li><p><strong>user_map_dict</strong> (<em>dict</em>) – Dict { user_id : encoded user label , … }</p></li>
+<li><p><strong>user_map_dict</strong> (<em>dict</em>) – Dict { user_id : encoded_user_label , … }</p></li>
 <li><p><strong>user_id_list</strong> (<em>list</em>) – User list to predict.</p></li>
 <li><p><strong>target_item_n</strong> (<em>int</em><em>, </em><em>optional</em>) – Size of candidate. Defaults to -1, which means all.</p></li>
 <li><p><strong>top_n</strong> (<em>int</em><em>, </em><em>optional</em>) – Number of items to recommend. Defaults to 10.</p></li>

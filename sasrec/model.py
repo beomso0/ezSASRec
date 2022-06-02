@@ -662,7 +662,7 @@ class SASREC(tf.keras.Model):
             auto_save (bool, optional): If true, save model with best validation score. Defaults to False.
             path (str, optional): Path to save model.
             exp_name (str, optional): Experiment name.
-            
+
         """
         
         num_steps = int(len(dataset.user_train) / batch_size)
@@ -843,7 +843,7 @@ class SASREC(tf.keras.Model):
 
         Args:
             dataset (:obj:`util.SASRecDataSet`): SASRecDataSet containing users-item interaction history.
-            user_map_dict (dict): Dict { user_id : encoded user label , ... }
+            user_map_dict (dict): Dict { user_id : encoded_user_label , ... }
             user_id_list (list): User list to predict.
             target_item_n (int, optional): Size of candidate. Defaults to -1, which means all.
             top_n (int, optional): Number of items to recommend. Defaults to 10.
@@ -970,8 +970,8 @@ class SASREC(tf.keras.Model):
             dataset (:obj:`SASRecDataSet`): SASRecDataSet containing users-item interaction history.
             user_id_list (list): User list to predict.
             item_list (list): Item list to predict
-            user_map_dict (dict): Dict { user_id : encoded user label , ... }
-            item_map_dict (dict): Dict { item : encoded item label , ... }
+            user_map_dict (dict): Dict { user_id : encoded_user_label , ... }
+            item_map_dict (dict): Dict { item : encoded_item_label , ... }
             batch_size (int, optional): Batch size. Defaults to 128.
 
         Raises:
