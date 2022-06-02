@@ -25,7 +25,7 @@ source_suffix = ['.rst', '.md']
 #%%
 # -- Project information -----------------------------------------------------
 
-project = 'custom_SASRec'
+project = 'ezSASRec'
 copyright = '2022, Beomso0'
 author = 'Beomso0'
 

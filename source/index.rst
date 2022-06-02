@@ -3,10 +3,10 @@
    You can adapt this file completely to your liking, but it should at least
    contain the root `toctree` directive.
 
-Welcome to custom_SASRec's documentation!
+Welcome to ezSASRec's documentation!
 =========================================
 
-The `custom_SASRec <https://github.com/beomso0/custom_SASRec>`_ provides tools to train, evaluate and save SASRec model. 
+The `ezSASRec <https://github.com/beomso0/custom_SASRec>`_ provides tools to train, evaluate and save SASRec model. 
 
 | Original codes and architectures are from these repositories.
 | 1. `kang205 SASRec <https://github.com/kang205/SASRec>`_
