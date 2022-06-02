@@ -660,10 +660,9 @@ class SASREC(tf.keras.Model):
             val_target_user_n (int, optional): Number of randomly sampled users to conduct validation. Defaults to 1000.
             target_item_n (int, optional): Size of candidate. Defaults to -1, which means all.
             auto_save (bool, optional): If true, save model with best validation score. Defaults to False.
-            path
-            exp_name
-        
-
+            path (str, optional): Path to save model.
+            exp_name (str, optional): Experiment name.
+            
         """
         
         num_steps = int(len(dataset.user_train) / batch_size)
