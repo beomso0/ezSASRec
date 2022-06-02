@@ -1,6 +1,6 @@
 import multiprocessing
 import numpy as np
-from multiprocessing import Process, Queue, Array, Manager
+from multiprocessing import Process, Queue
 import tensorflow as tf
 
 
@@ -103,84 +103,84 @@ class WarpSampler(object):
             p.terminate()
             p.join()
 
-class PredictSampler(object):
-    """Sampler object that creates an iterator for feeding batch data while predicting.
+# class PredictSampler(object):
+#     """Sampler object that creates an iterator for feeding batch data while predicting.
 
-    Attributes:
-        User: dict, all the users (keys) with items as values
-        usernum: integer, total number of users
-        itemnum: integer, total number of items
-        batch_size (int): batch size
-        maxlen (int): maximum input sequence length
-        n_workers (int): number of workers for parallel execution
-    """
+#     Attributes:
+#         User: dict, all the users (keys) with items as values
+#         usernum: integer, total number of users
+#         itemnum: integer, total number of items
+#         batch_size (int): batch size
+#         maxlen (int): maximum input sequence length
+#         n_workers (int): number of workers for parallel execution
+#     """
 
-    def __init__(self, User, user_map_dict,user_id_list, batch_size=128,n_workers=1):
+#     def __init__(self, User, user_map_dict,user_id_list, batch_size=128,n_workers=1):
         
-        self.result_queue = Queue(maxsize=n_workers * 10)
-        self.processors = []
-        mgr = Manager()
-        self.mgr_user_list = mgr.list(user_id_list)
-        for _ in range(n_workers):
-            self.processors.append(
-                Process(
-                    target=predict_sample_function,
-                    args=(
-                        User,
-                        user_map_dict,
-                        batch_size,
-                        self.result_queue,
-                        self.mgr_user_list
-                    ),
-                )
-            )
-            self.processors[-1].daemon = True
-            self.processors[-1].start()
+#         self.result_queue = Queue(maxsize=n_workers * 10)
+#         self.processors = []
+#         mgr = Manager()
+#         self.mgr_user_list = mgr.list(user_id_list)
+#         for _ in range(n_workers):
+#             self.processors.append(
+#                 Process(
+#                     target=predict_sample_function,
+#                     args=(
+#                         User,
+#                         user_map_dict,
+#                         batch_size,
+#                         self.result_queue,
+#                         self.mgr_user_list
+#                     ),
+#                 )
+#             )
+#             self.processors[-1].daemon = True
+#             self.processors[-1].start()
 
-    def next_batch(self):
-        return self.result_queue.get()
+#     def next_batch(self):
+#         return self.result_queue.get()
 
-    def close(self):
-        for p in self.processors:
-            p.terminate()
-            p.join()
+#     def close(self):
+#         for p in self.processors:
+#             p.terminate()
+#             p.join()
 
-def predict_sample_function(
-    user_history, user_map_dict,batch_size, result_queue, mgr_user_list
-):
-    """Batch sampler that creates a sequence of negative items based on the
-    original sequence of items (positive) that the user has interacted with.
+# def predict_sample_function(
+#     user_history, user_map_dict,batch_size, result_queue, mgr_user_list
+# ):
+#     """Batch sampler that creates a sequence of negative items based on the
+#     original sequence of items (positive) that the user has interacted with.
 
-    Args:
-        user_train (dict): dictionary of training exampled for each user
-        usernum (int): number of users
-        itemnum (int): number of items
-        batch_size (int): batch size
-        maxlen (int): maximum input sequence length
-        result_queue (multiprocessing.Queue): queue for storing sample results
-        seed (int): seed for random generator
-    """
+#     Args:
+#         user_train (dict): dictionary of training exampled for each user
+#         usernum (int): number of users
+#         itemnum (int): number of items
+#         batch_size (int): batch size
+#         maxlen (int): maximum input sequence length
+#         result_queue (multiprocessing.Queue): queue for storing sample results
+#         seed (int): seed for random generator
+#     """
     
 
-    def sample():
+#     def sample():
         
-        user_id = mgr_user_list.pop()
-        user = user_map_dict[user_id]
-        seq = user_history[user]
+#         user_id = mgr_user_list.pop()
+#         user = user_map_dict[user_id]
+#         seq = user_history[user]
 
-        return (user_id, seq)
+#         return (user_id, seq)
 
-    # original
-    while True:
-        one_batch = []
-        for i in range(batch_size):
-            try:
-                one_batch.append(sample())
-            except IndexError:
-                break
+#     # original
+#     while True:
+#         one_batch = []
+#         for i in range(batch_size):
+#             try:
+#                 one_batch.append(sample())
+#             except IndexError:
+#                 break
 
-        result_queue.put(zip(*one_batch))
-        print(len(mgr_user_list))
-        if len(mgr_user_list)<=0:
-            print('while loop break')
-            break
+#         result_queue.put(zip(*one_batch))
+#         print(len(mgr_user_list))
+#         if len(mgr_user_list)<=0:
+#             print('while loop break')
+#             break

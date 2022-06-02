@@ -14,16 +14,15 @@ class MultiHeadAttention(tf.keras.layers.Layer):
     - Q (query), K (key) and V (value) are split into multiple heads (num_heads)
     - each tuple (q, k, v) are fed to scaled_dot_product_attention
     - all attention outputs are concatenated
-    """
 
-    def __init__(self, attention_dim, num_heads, dropout_rate):
-        """Initialize parameters.
-
-        Args:
+    Args:
             attention_dim (int): Dimension of the attention embeddings.
             num_heads (int): Number of heads in the multi-head self-attention module.
             dropout_rate (float): Dropout probability.
-        """
+    """
+
+    def __init__(self, attention_dim, num_heads, dropout_rate):
+
         super(MultiHeadAttention, self).__init__()
         self.num_heads = num_heads
         self.attention_dim = attention_dim
@@ -122,15 +121,13 @@ class MultiHeadAttention(tf.keras.layers.Layer):
 class PointWiseFeedForward(tf.keras.layers.Layer):
     """
     Convolution layers with residual connection
+
+    Args:
+            conv_dims (list): List of the dimensions of the Feedforward layer.
+            dropout_rate (float): Dropout probability.
     """
 
     def __init__(self, conv_dims, dropout_rate):
-        """Initialize parameters.
-
-        Args:
-            conv_dims (list): List of the dimensions of the Feedforward layer.
-            dropout_rate (float): Dropout probability.
-        """
         super(PointWiseFeedForward, self).__init__()
         self.conv_dims = conv_dims
         self.dropout_rate = dropout_rate
@@ -168,6 +165,13 @@ class EncoderLayer(tf.keras.layers.Layer):
     """
     Transformer based encoder layer
 
+    Args:
+            seq_max_len (int): Maximum sequence length.
+            embedding_dim (int): Embedding dimension.
+            attention_dim (int): Dimension of the attention embeddings.
+            num_heads (int): Number of heads in the multi-head self-attention module.
+            conv_dims (list): List of the dimensions of the Feedforward layer.
+            dropout_rate (float): Dropout probability.
     """
 
     def __init__(
@@ -181,13 +185,7 @@ class EncoderLayer(tf.keras.layers.Layer):
     ):
         """Initialize parameters.
 
-        Args:
-            seq_max_len (int): Maximum sequence length.
-            embedding_dim (int): Embedding dimension.
-            attention_dim (int): Dimension of the attention embeddings.
-            num_heads (int): Number of heads in the multi-head self-attention module.
-            conv_dims (list): List of the dimensions of the Feedforward layer.
-            dropout_rate (float): Dropout probability.
+        
         """
         super(EncoderLayer, self).__init__()
 
@@ -259,6 +257,14 @@ class Encoder(tf.keras.layers.Layer):
     """
     Invokes Transformer based encoder with user defined number of layers
 
+    Args:
+            num_layers (int): Number of layers.
+            seq_max_len (int): Maximum sequence length.
+            embedding_dim (int): Embedding dimension.
+            attention_dim (int): Dimension of the attention embeddings.
+            num_heads (int): Number of heads in the multi-head self-attention module.
+            conv_dims (list): List of the dimensions of the Feedforward layer.
+            dropout_rate (float): Dropout probability.
     """
 
     def __init__(
@@ -273,14 +279,7 @@ class Encoder(tf.keras.layers.Layer):
     ):
         """Initialize parameters.
 
-        Args:
-            num_layers (int): Number of layers.
-            seq_max_len (int): Maximum sequence length.
-            embedding_dim (int): Embedding dimension.
-            attention_dim (int): Dimension of the attention embeddings.
-            num_heads (int): Number of heads in the multi-head self-attention module.
-            conv_dims (list): List of the dimensions of the Feedforward layer.
-            dropout_rate (float): Dropout probability.
+        
         """
         super(Encoder, self).__init__()
 
@@ -322,6 +321,11 @@ class LayerNormalization(tf.keras.layers.Layer):
     """
     Layer normalization using mean and variance
     gamma and beta are the learnable parameters
+
+    Args:
+            seq_max_len (int): Maximum sequence length.
+            embedding_dim (int): Embedding dimension.
+            epsilon (float): Epsilon value.
     """
 
     def __init__(self, seq_max_len, embedding_dim, epsilon):
@@ -364,8 +368,7 @@ class LayerNormalization(tf.keras.layers.Layer):
 
 
 class SASREC(tf.keras.Model):
-    """SAS Rec model
-    Self-Attentive Sequential Recommendation Using Transformer
+    """Self-Attentive Sequential Recommendation Using Transformer    
 
     :Citation:
 
@@ -376,21 +379,25 @@ class SASREC(tf.keras.Model):
         Original source code from nnkkmto/SASRec-tf2,
         https://github.com/nnkkmto/SASRec-tf2
 
+    Keyword Args:
+        item_num (int): Number of items in the dataset.
+        seq_max_len (int): Maximum number of items in user history.
+        num_blocks (int): Number of Transformer blocks to be used.
+        embedding_dim (int): Item embedding dimension.
+        attention_dim (int): Transformer attention dimension.
+        attention_num_heads (int): Transformer attention head.
+        conv_dims (list): List of the dimensions of the Feedforward layer.
+        dropout_rate (float): Dropout rate.
+        l2_reg (float): Coefficient of the L2 regularization.
+
+    Attributes:
+        epoch (int): Epoch of trained model.
+        best_score (float): Best validation HR@10 score while training.
+        val_users (list): User list for validation.
+        history (:obj:`pandas.DataFrame`): Train history containing epoch, NDCG@10, and HR@10.
     """
-
+    
     def __init__(self, **kwargs):
-        """Model initialization.
-
-        Args:
-            item_num (int): Number of items in the dataset.
-            seq_max_len (int): Maximum number of items in user history.
-            num_blocks (int): Number of Transformer blocks to be used.
-            embedding_dim (int): Item embedding dimension.
-            attention_dim (int): Transformer attention dimension.
-            conv_dims (list): List of the dimensions of the Feedforward layer.
-            dropout_rate (float): Dropout rate.
-            l2_reg (float): Coefficient of the L2 regularization.
-        """
 
         super(SASREC, self).__init__()
 
@@ -611,7 +618,7 @@ class SASREC(tf.keras.Model):
     def create_combined_dataset(self, u, seq, pos, neg):
         """
         function to create model inputs from sampled batch data.
-        This function is used only during training.
+        This function is used during training.
         """
         inputs = {}
         seq = tf.keras.preprocessing.sequence.pad_sequences(
@@ -639,31 +646,27 @@ class SASREC(tf.keras.Model):
         target = np.expand_dims(target, axis=-1)
         return inputs, target
 
-    def train(self, dataset, sampler, **kwargs):
-        """
-        High level function for model training as well as
-        evaluation on the validation and test dataset
+    def train(self, dataset, sampler, num_epochs=10,batch_size=128,lr=0.001,\
+            val_epoch=5,val_target_user_n=1000,target_item_n=-1,auto_save=False,\
+            path='./',exp_name='SASRec_exp'):
+        
+        """High level function for model training as well as evaluation on the validation and test dataset
 
-        <kwargs>
-        num_epochs
-        batch_size
-        learning_rate
-        val_epoch : epoch interval for validation
-        val_target_user_n : validation 
-        target_item_n : num of neg_candidate
-        auto_save : True or False
-        path : path where the model will be saved
-        exp_name
+        Args:
+            dataset (:obj:`util.SASRecDataSet`): SASRecDataSet containing users-item interaction history.
+            sampler (:obj:`util.WarpSampler`): WarpSampler.
+            num_epochs (int, optional): Epoch. Defaults to 10.
+            batch_size (int, optional): Batch size. Defaults to 128.
+            lr (float, optional): Learning rate. Defaults to 0.001.
+            val_epoch (int, optional): Validation term. Defaults to 5.
+            val_target_user_n (int, optional): Number of randomly sampled users to conduct validation. Defaults to 1000.
+            target_item_n (int, optional): Size of candidate. Defaults to -1, which means all.
+            auto_save (bool, optional): If true, save model with best validation score. Defaults to False.
+            path
+            exp_name
+        
+
         """
-        num_epochs = kwargs.get("num_epochs", 10)
-        batch_size = kwargs.get("batch_size", 128)
-        lr = kwargs.get("learning_rate", 0.001)
-        val_epoch = kwargs.get("val_epoch", 5)
-        val_target_user_n =kwargs.get("val_target_user_n",1000)
-        target_item_n = kwargs.get("target_item_n",-1)
-        auto_save = kwargs.get("auto_save",False)
-        path = kwargs.get("path",'./')
-        exp_name = kwargs.get("exp_name",'SASRec_exp')
         
         num_steps = int(len(dataset.user_train) / batch_size)
 
@@ -740,20 +743,23 @@ class SASREC(tf.keras.Model):
         
         if auto_save:
             self.history.to_csv(path+exp_name+'/'+exp_name+'_train_log.csv',index=False)
-            # with open(path+exp_name+'/'+exp_name+'_train_log.txt','w') as f:
-            #     f.writelines(self.history)
+        
+        return
 
-    def evaluate(self, dataset,**kwargs):
-        """
-        Evaluation on the test users (users with at least 3 items)
+    def evaluate(self, dataset,target_user_n=1000,target_item_n=-1,rank_threshold=10,is_val=False):
+        """Evaluate model on validation set or test set
 
-        <kwargs>
-        model_ | dataset: SASRecDataSet 객체 | target_user_n: evaluate할 user 수 | target_item_n
+        Args:
+            dataset (:obj:`SASRecDataSet`): SASRecDataSet containing users-item interaction history.
+            target_user_n (int, optional): Number of randomly sampled users to evaluate. Defaults to 1000.
+            target_item_n (int, optional): Size of candidate. Defaults to -1, which means all.
+            rank_threshold (int, optional): k value in NDCG@k and HR@k. Defaults to 10.
+            is_val (bool, optional): If true, evaluate on validation set. If False, evaluate on test set. Defaults to False.
+
+        Returns:
+            NDCG@k (float)
+            HR@k (float)
         """
-        target_user_n = kwargs.get("target_user_n", 1000)
-        target_item_n = kwargs.get("target_item_n", -1)
-        rank_threshold = kwargs.get("rank_threshold", 10)
-        is_val = kwargs.get("is_val", False)
 
         usernum = dataset.usernum
         itemnum = dataset.itemnum
@@ -836,6 +842,20 @@ class SASREC(tf.keras.Model):
         return NDCG / valid_user, HT / valid_user
 
     def recommend_item(self, dataset, user_map_dict,user_id_list, target_item_n=-1,top_n=10,exclude_purchased=True,is_test=False):
+        """Recommend items to user
+
+        Args:
+            dataset (:obj:`util.SASRecDataSet`): SASRecDataSet containing users-item interaction history.
+            user_map_dict (dict): Dict { user_id : encoded user label , ... }
+            user_id_list (list): User list to predict.
+            target_item_n (int, optional): Size of candidate. Defaults to -1, which means all.
+            top_n (int, optional): Number of items to recommend. Defaults to 10.
+            exclude_purchased (bool, optional): If true, exclude already purchased item from candidate. Defaults to True.
+            is_test (bool, optional): If true, exclude the last item from each user's sequence. Defaults to False.
+
+        Returns:
+            :obj:`pandas.DataFrame`
+        """
         all = dataset.User
         itemnum = dataset.itemnum
         users = [user_map_dict[u] for u in user_id_list]
@@ -899,6 +919,9 @@ class SASREC(tf.keras.Model):
         return return_dict
     
     def old_get_user_item_score(self, dataset, user_map_dict,item_map_dict,user_id_list, item_list,is_test=False):
+        """
+        Deprecated
+        """
         all = dataset.User
         users = [user_map_dict[u] for u in user_id_list]
         items = [item_map_dict[i] for i in item_list]
@@ -944,6 +967,22 @@ class SASREC(tf.keras.Model):
         return return_df
         
     def get_user_item_score(self,dataset,user_id_list, item_list,user_map_dict,item_map_dict,batch_size=128):
+        """Get item score for each user on batch
+
+        Args:
+            dataset (:obj:`SASRecDataSet`): SASRecDataSet containing users-item interaction history.
+            user_id_list (list): User list to predict.
+            item_list (list): Item list to predict
+            user_map_dict (dict): Dict { user_id : encoded user label , ... }
+            item_map_dict (dict): Dict { item : encoded item label , ... }
+            batch_size (int, optional): Batch size. Defaults to 128.
+
+        Raises:
+            Exception: Batch_size must be smaller than user_id_list size.
+
+        Returns:
+            :obj:`pandas.DataFrame`
+        """
 
         if batch_size >= len(user_id_list):
             raise Exception('batch_size must be smaller than user_id_list size')
@@ -999,7 +1038,7 @@ class SASREC(tf.keras.Model):
     def create_combined_dataset_pred(self,u,seq,cand):
         """
         function to create model inputs from sampled batch data.
-        This function is used only during training.
+        This function is used during predicting on batch.
         """
         inputs = {}
         seq = tf.keras.preprocessing.sequence.pad_sequences(
@@ -1013,12 +1052,13 @@ class SASREC(tf.keras.Model):
         return inputs
     
 
-    def batch_predict(self, inputs,neg_cand_n):
-        """Returns the logits for the test items.
+    def batch_predict(self, inputs,cand_n):
+        """Returns the logits for the item candidates.
 
         Args:
             inputs (tf.Tensor): Input tensor.
-            neg_cand_n: num of negative candidates
+            cand_n (int): Num of candidates.
+
         Returns:
             tf.Tensor: Output tensor.
         """
@@ -1047,13 +1087,22 @@ class SASREC(tf.keras.Model):
 
         test_logits = tf.reshape(
             test_logits,
-            [tf.shape(input_seq)[0], self.seq_max_len, 1+neg_cand_n],
-        )  # (1, 50, 1+neg_can)
+            [tf.shape(input_seq)[0], self.seq_max_len, 1+cand_n],
+        )  # (1, 50, 1+can)
         test_logits = test_logits[:, -1, :]  # (1, 101)
         return test_logits
 
     
     def save(self,path, exp_name='sas_experiment'):
+        """Save trained SASRec Model
+
+        Args:
+            path (str): Path to save model.
+            exp_name (str): Experiment name.
+        
+        Examples:
+            >>> model.save(path, exp_name)       
+        """
         
         # make dir
         if not os.path.exists(path+exp_name):
@@ -1073,9 +1122,17 @@ class SASREC(tf.keras.Model):
         else:
             with open(path+exp_name+'/'+exp_name+'_save_log.txt','a') as f:
                 f.writelines(f'[epoch {self.epoch}] Best HR@10 score: {self.best_score}\n')
+        
+        return
     
 
     def sample_val_users(self,dataset,target_user_n):
+        """Sample users for validation
+
+        Args:
+            dataset (:obj:`SASRecDataSet`): SASRec dataset used for training
+            target_user_n (int): Number of users to sample
+        """
         usernum = dataset.usernum
         if usernum > target_user_n:
             self.val_users = random.sample(range(1, usernum + 1), target_user_n)
