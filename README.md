@@ -1,4 +1,4 @@
-# **SASRec**
+# **ezSASRec**
 <!-- 
 ## Introduction
 This repository contains tools to train, evaluate and save SASRec model.
