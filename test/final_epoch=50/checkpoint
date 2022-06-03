@@ -1,2 +1,0 @@
-model_checkpoint_path: "final_epoch=50_weights"
-all_model_checkpoint_paths: "final_epoch=50_weights"
