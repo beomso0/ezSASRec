@@ -1,0 +1,10 @@
+SASRec model module
+##############################
+
+SASRec model to train, evaluate and save.
+
+Main Model
+******************************
+
+.. automodule:: sasrec.model
+    :members:
