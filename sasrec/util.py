@@ -222,6 +222,7 @@ def load_model(path, exp_name='sas_experiment'):
                     l2_reg=arg_dict['l2_reg'],
                     history=arg_dict['history'],
         )
-    model.load_weights(path+exp_name+'/'+exp_name+'_weights')
+
+    model.load_weights(f'{path}/{exp_name}/{exp_name}_weights')
     
     return model
