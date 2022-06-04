@@ -206,7 +206,7 @@ def load_model(path, exp_name='sas_experiment'):
     Returns:
         model.SASREC: loaded SASRec model
     """
-    with open(path+exp_name+'/'+exp_name+'_model_args','rb') as f:
+    with open(f'{path}/{exp_name}/{exp_name}_model_args','rb') as f:
         arg_dict = pickle.load(f)
     
     if 'history' not in arg_dict.keys():
