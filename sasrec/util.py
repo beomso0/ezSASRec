@@ -211,6 +211,7 @@ def load_model(path, exp_name='sas_experiment'):
     
     if 'history' not in arg_dict.keys():
         arg_dict['history'] = None
+        
     model = SASREC(item_num=arg_dict['item_num'],
                     seq_max_len=arg_dict['seq_max_len'],
                     num_blocks=arg_dict['num_blocks'],
