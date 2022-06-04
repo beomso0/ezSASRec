@@ -739,7 +739,7 @@ class SASREC(tf.keras.Model):
                         print('best score model updated and saved')
         
         if auto_save:
-            self.history.to_csv(path+exp_name+'/'+exp_name+'_train_log.csv',index=False)
+            self.history.to_csv(f'{path}/{exp_name}/{exp_name}_train_log.csv',index=False)
         
         return
 
@@ -1102,22 +1102,22 @@ class SASREC(tf.keras.Model):
         """
         
         # make dir
-        if not os.path.exists(path+exp_name):
-            os.mkdir(path+exp_name)
+        if not os.path.exists(f'{path}/{exp_name}'):
+            os.mkdir(f'{path}/{exp_name}')
 
-        self.save_weights(path+exp_name+'/'+exp_name+'_weights') # save trained weights
+        self.save_weights(f'{path}/{exp_name}/{exp_name}_weights') # save trained weights
         arg_list = ['item_num','seq_max_len','num_blocks','embedding_dim','attention_dim','attention_num_heads','dropout_rate','conv_dims','l2_reg','history']
         dict_to_save = {a: self.__dict__[a] for a in arg_list}
 
-        with open(path+exp_name+'/'+exp_name+'_model_args','wb') as f:
+        with open(f'{path}/{exp_name}/{exp_name}_model_args','wb') as f:
             pickle.dump(dict_to_save, f)
         
-        if not os.path.isfile(path+exp_name+'/'+exp_name+'_save_log.txt'): 
-            with open(path+exp_name+'/'+exp_name+'_save_log.txt','w') as f:
+        if not os.path.isfile(f'{path}/{exp_name}/{exp_name}_save_log.txt'): 
+            with open(f'{path}/{exp_name}/{exp_name}_save_log.txt','w') as f:
                 f.writelines(f'Model args: {dict_to_save}\n')
                 f.writelines(f'[epoch {self.epoch}] Best HR@10 score: {self.best_score}\n')
         else:
-            with open(path+exp_name+'/'+exp_name+'_save_log.txt','a') as f:
+            with open(f'{path}/{exp_name}/{exp_name}_save_log.txt','a') as f:
                 f.writelines(f'[epoch {self.epoch}] Best HR@10 score: {self.best_score}\n')
         
         return
