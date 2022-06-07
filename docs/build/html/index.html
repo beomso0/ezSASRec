@@ -15,10 +15,12 @@
         <script src="_static/jquery.js"></script>
         <script src="_static/underscore.js"></script>
         <script src="_static/doctools.js"></script>
+        <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+        <script src="https://unpkg.com/@jupyter-widgets/html-manager@^0.20.1/dist/embed-amd.js"></script>
     <script src="_static/js/theme.js"></script>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
-    <link rel="next" title="quickstart" href="quickstart.html" /> 
+    <link rel="next" title="ezSASRec QuickStart" href="example.html" /> 
 </head>
 
 <body class="wy-body-for-nav"> 
@@ -38,7 +40,10 @@
         </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
               <p class="caption" role="heading"><span class="caption-text">Quick Start</span></p>
 <ul>
-<li class="toctree-l1"><a class="reference internal" href="quickstart.html">quickstart</a></li>
+<li class="toctree-l1"><a class="reference internal" href="example.html">ezSASRec QuickStart</a></li>
+<li class="toctree-l1"><a class="reference internal" href="example.html#Preprocessing">Preprocessing</a></li>
+<li class="toctree-l1"><a class="reference internal" href="example.html#Load-data-and-Train-model">Load data and Train model</a></li>
+<li class="toctree-l1"><a class="reference internal" href="example.html#Predict">Predict</a></li>
 </ul>
 <p class="caption" role="heading"><span class="caption-text">Model and Util</span></p>
 <ul>
@@ -70,7 +75,31 @@
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
            <div itemprop="articleBody">
              
-  <section id="ezsasrec">
+  
+<style>
+/* CSS overrides for sphinx_rtd_theme */
+
+/* 24px margin */
+.nbinput.nblast.container,
+.nboutput.nblast.container {
+    margin-bottom: 19px;  /* padding has already 5px */
+}
+
+/* ... except between code cells! */
+.nblast.container + .nbinput.container {
+    margin-top: -19px;
+}
+
+.admonition > p:before {
+    margin-right: 4px;  /* make room for the exclamation icon */
+}
+
+/* Fix math alignment, see https://github.com/rtfd/sphinx_rtd_theme/pull/686 */
+.math {
+    text-align: unset;
+}
+</style>
+<section id="ezsasrec">
 <h1>ezSASRec<a class="headerlink" href="#ezsasrec" title="Permalink to this headline"></a></h1>
 <p>The <a class="reference external" href="https://github.com/beomso0/custom_SASRec">ezSASRec</a> provides tools to train, evaluate and save SASRec model.</p>
 <div class="line-block">
@@ -81,7 +110,10 @@
 <div class="toctree-wrapper compound">
 <p class="caption" role="heading"><span class="caption-text">Quick Start</span></p>
 <ul>
-<li class="toctree-l1"><a class="reference internal" href="quickstart.html">quickstart</a></li>
+<li class="toctree-l1"><a class="reference internal" href="example.html">ezSASRec QuickStart</a></li>
+<li class="toctree-l1"><a class="reference internal" href="example.html#Preprocessing">Preprocessing</a></li>
+<li class="toctree-l1"><a class="reference internal" href="example.html#Load-data-and-Train-model">Load data and Train model</a></li>
+<li class="toctree-l1"><a class="reference internal" href="example.html#Predict">Predict</a></li>
 </ul>
 </div>
 <div class="toctree-wrapper compound">
@@ -105,7 +137,7 @@
            </div>
           </div>
           <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
-        <a href="quickstart.html" class="btn btn-neutral float-right" title="quickstart" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+        <a href="example.html" class="btn btn-neutral float-right" title="ezSASRec QuickStart" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
     </div>
 
   <hr/>
