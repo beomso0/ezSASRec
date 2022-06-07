@@ -15,6 +15,7 @@
         <script src="../../_static/underscore.js"></script>
         <script src="../../_static/doctools.js"></script>
         <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+        <script src="https://unpkg.com/@jupyter-widgets/html-manager@^0.20.1/dist/embed-amd.js"></script>
     <script src="../../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../../genindex.html" />
     <link rel="search" title="Search" href="../../search.html" /> 
@@ -35,7 +36,14 @@
   </form>
 </div>
         </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
-              <p class="caption" role="heading"><span class="caption-text">Model and Util</span></p>
+              <p class="caption" role="heading"><span class="caption-text">Quick Start</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../example.html">ezSASRec QuickStart</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../example.html#Preprocessing">Preprocessing</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../example.html#Load-data-and-Train-model">Load data and Train model</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../example.html#Predict">Predict</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Model and Util</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../../model.html">Model</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../util.html">Util</a></li>
@@ -437,15 +445,6 @@
 
 <div class="viewcode-block" id="SASREC"><a class="viewcode-back" href="../../model.html#sasrec.model.SASREC">[docs]</a><span class="k">class</span> <span class="nc">SASREC</span><span class="p">(</span><span class="n">tf</span><span class="o">.</span><span class="n">keras</span><span class="o">.</span><span class="n">Model</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Self-Attentive Sequential Recommendation Using Transformer    </span>
-
-<span class="sd">    :Citation:</span>
-
-<span class="sd">        Wang-Cheng Kang, Julian McAuley (2018), Self-Attentive Sequential</span>
-<span class="sd">        Recommendation. Proceedings of IEEE International Conference on</span>
-<span class="sd">        Data Mining (ICDM&#39;18)</span>
-
-<span class="sd">        Original source code from nnkkmto/SASRec-tf2,</span>
-<span class="sd">        https://github.com/nnkkmto/SASRec-tf2</span>
 
 <span class="sd">    Keyword Args:</span>
 <span class="sd">        item_num (int): Number of items in the dataset.</span>
