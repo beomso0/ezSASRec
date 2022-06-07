@@ -39,8 +39,8 @@ release = '0.4.1'
 # extensions coming with Sphinx (named 'sphinx.ext.*') or your custom
 # ones.
 extensions = [
-  'sphinx.ext.todo', 'sphinx.ext.viewcode', 'sphinx.ext.autodoc','sphinx.ext.githubpages',
-    'myst_parser','sphinx.ext.napoleon'
+   'nbsphinx','sphinx.ext.todo', 'sphinx.ext.viewcode', 'sphinx.ext.autodoc','sphinx.ext.githubpages',
+    'myst_parser','sphinx.ext.napoleon',
 ]
 
 napoleon_custom_sections = [('Returns', 'params_style')]

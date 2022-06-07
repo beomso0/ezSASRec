@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>sasrec.model &mdash; custom_SASRec 0.4.1 documentation</title>
+  <title>sasrec.model &mdash; ezSASRec 0.4.1 documentation</title>
       <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
   <!--[if lt IE 9]>
@@ -14,6 +14,7 @@
         <script src="../../_static/jquery.js"></script>
         <script src="../../_static/underscore.js"></script>
         <script src="../../_static/doctools.js"></script>
+        <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
     <script src="../../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../../genindex.html" />
     <link rel="search" title="Search" href="../../search.html" /> 
@@ -24,7 +25,7 @@
     <nav data-toggle="wy-nav-shift" class="wy-nav-side">
       <div class="wy-side-scroll">
         <div class="wy-side-nav-search" >
-            <a href="../../index.html" class="icon icon-home"> custom_SASRec
+            <a href="../../index.html" class="icon icon-home"> ezSASRec
           </a>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
@@ -34,11 +35,7 @@
   </form>
 </div>
         </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
-              <p class="caption" role="heading"><span class="caption-text">Quick Start</span></p>
-<ul>
-<li class="toctree-l1"><a class="reference internal" href="../../quickstart.html">quickstart</a></li>
-</ul>
-<p class="caption" role="heading"><span class="caption-text">Model and Util</span></p>
+              <p class="caption" role="heading"><span class="caption-text">Model and Util</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../../model.html">Model</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../util.html">Util</a></li>
@@ -50,7 +47,7 @@
 
     <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
           <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
-          <a href="../../index.html">custom_SASRec</a>
+          <a href="../../index.html">ezSASRec</a>
       </nav>
 
       <div class="wy-nav-content">
@@ -810,7 +807,7 @@
                         <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;best score model updated and saved&#39;</span><span class="p">)</span>
         
         <span class="k">if</span> <span class="n">auto_save</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">history</span><span class="o">.</span><span class="n">to_csv</span><span class="p">(</span><span class="n">path</span><span class="o">+</span><span class="n">exp_name</span><span class="o">+</span><span class="s1">&#39;/&#39;</span><span class="o">+</span><span class="n">exp_name</span><span class="o">+</span><span class="s1">&#39;_train_log.csv&#39;</span><span class="p">,</span><span class="n">index</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">history</span><span class="o">.</span><span class="n">to_csv</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">path</span><span class="si">}</span><span class="s1">/</span><span class="si">{</span><span class="n">exp_name</span><span class="si">}</span><span class="s1">/</span><span class="si">{</span><span class="n">exp_name</span><span class="si">}</span><span class="s1">_train_log.csv&#39;</span><span class="p">,</span><span class="n">index</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
         
         <span class="k">return</span></div>
 
@@ -1173,22 +1170,22 @@
 <span class="sd">        &quot;&quot;&quot;</span>
         
         <span class="c1"># make dir</span>
-        <span class="k">if</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">path</span><span class="o">+</span><span class="n">exp_name</span><span class="p">):</span>
-            <span class="n">os</span><span class="o">.</span><span class="n">mkdir</span><span class="p">(</span><span class="n">path</span><span class="o">+</span><span class="n">exp_name</span><span class="p">)</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">path</span><span class="si">}</span><span class="s1">/</span><span class="si">{</span><span class="n">exp_name</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">):</span>
+            <span class="n">os</span><span class="o">.</span><span class="n">mkdir</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">path</span><span class="si">}</span><span class="s1">/</span><span class="si">{</span><span class="n">exp_name</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
 
-        <span class="bp">self</span><span class="o">.</span><span class="n">save_weights</span><span class="p">(</span><span class="n">path</span><span class="o">+</span><span class="n">exp_name</span><span class="o">+</span><span class="s1">&#39;/&#39;</span><span class="o">+</span><span class="n">exp_name</span><span class="o">+</span><span class="s1">&#39;_weights&#39;</span><span class="p">)</span> <span class="c1"># save trained weights</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">save_weights</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">path</span><span class="si">}</span><span class="s1">/</span><span class="si">{</span><span class="n">exp_name</span><span class="si">}</span><span class="s1">/</span><span class="si">{</span><span class="n">exp_name</span><span class="si">}</span><span class="s1">_weights&#39;</span><span class="p">)</span> <span class="c1"># save trained weights</span>
         <span class="n">arg_list</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;item_num&#39;</span><span class="p">,</span><span class="s1">&#39;seq_max_len&#39;</span><span class="p">,</span><span class="s1">&#39;num_blocks&#39;</span><span class="p">,</span><span class="s1">&#39;embedding_dim&#39;</span><span class="p">,</span><span class="s1">&#39;attention_dim&#39;</span><span class="p">,</span><span class="s1">&#39;attention_num_heads&#39;</span><span class="p">,</span><span class="s1">&#39;dropout_rate&#39;</span><span class="p">,</span><span class="s1">&#39;conv_dims&#39;</span><span class="p">,</span><span class="s1">&#39;l2_reg&#39;</span><span class="p">,</span><span class="s1">&#39;history&#39;</span><span class="p">]</span>
         <span class="n">dict_to_save</span> <span class="o">=</span> <span class="p">{</span><span class="n">a</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="vm">__dict__</span><span class="p">[</span><span class="n">a</span><span class="p">]</span> <span class="k">for</span> <span class="n">a</span> <span class="ow">in</span> <span class="n">arg_list</span><span class="p">}</span>
 
-        <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">path</span><span class="o">+</span><span class="n">exp_name</span><span class="o">+</span><span class="s1">&#39;/&#39;</span><span class="o">+</span><span class="n">exp_name</span><span class="o">+</span><span class="s1">&#39;_model_args&#39;</span><span class="p">,</span><span class="s1">&#39;wb&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+        <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">path</span><span class="si">}</span><span class="s1">/</span><span class="si">{</span><span class="n">exp_name</span><span class="si">}</span><span class="s1">/</span><span class="si">{</span><span class="n">exp_name</span><span class="si">}</span><span class="s1">_model_args&#39;</span><span class="p">,</span><span class="s1">&#39;wb&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
             <span class="n">pickle</span><span class="o">.</span><span class="n">dump</span><span class="p">(</span><span class="n">dict_to_save</span><span class="p">,</span> <span class="n">f</span><span class="p">)</span>
         
-        <span class="k">if</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isfile</span><span class="p">(</span><span class="n">path</span><span class="o">+</span><span class="n">exp_name</span><span class="o">+</span><span class="s1">&#39;/&#39;</span><span class="o">+</span><span class="n">exp_name</span><span class="o">+</span><span class="s1">&#39;_save_log.txt&#39;</span><span class="p">):</span> 
-            <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">path</span><span class="o">+</span><span class="n">exp_name</span><span class="o">+</span><span class="s1">&#39;/&#39;</span><span class="o">+</span><span class="n">exp_name</span><span class="o">+</span><span class="s1">&#39;_save_log.txt&#39;</span><span class="p">,</span><span class="s1">&#39;w&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isfile</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">path</span><span class="si">}</span><span class="s1">/</span><span class="si">{</span><span class="n">exp_name</span><span class="si">}</span><span class="s1">/</span><span class="si">{</span><span class="n">exp_name</span><span class="si">}</span><span class="s1">_save_log.txt&#39;</span><span class="p">):</span> 
+            <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">path</span><span class="si">}</span><span class="s1">/</span><span class="si">{</span><span class="n">exp_name</span><span class="si">}</span><span class="s1">/</span><span class="si">{</span><span class="n">exp_name</span><span class="si">}</span><span class="s1">_save_log.txt&#39;</span><span class="p">,</span><span class="s1">&#39;w&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
                 <span class="n">f</span><span class="o">.</span><span class="n">writelines</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;Model args: </span><span class="si">{</span><span class="n">dict_to_save</span><span class="si">}</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">)</span>
                 <span class="n">f</span><span class="o">.</span><span class="n">writelines</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;[epoch </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">epoch</span><span class="si">}</span><span class="s1">] Best HR@10 score: </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">best_score</span><span class="si">}</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">)</span>
         <span class="k">else</span><span class="p">:</span>
-            <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">path</span><span class="o">+</span><span class="n">exp_name</span><span class="o">+</span><span class="s1">&#39;/&#39;</span><span class="o">+</span><span class="n">exp_name</span><span class="o">+</span><span class="s1">&#39;_save_log.txt&#39;</span><span class="p">,</span><span class="s1">&#39;a&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+            <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">path</span><span class="si">}</span><span class="s1">/</span><span class="si">{</span><span class="n">exp_name</span><span class="si">}</span><span class="s1">/</span><span class="si">{</span><span class="n">exp_name</span><span class="si">}</span><span class="s1">_save_log.txt&#39;</span><span class="p">,</span><span class="s1">&#39;a&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
                 <span class="n">f</span><span class="o">.</span><span class="n">writelines</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;[epoch </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">epoch</span><span class="si">}</span><span class="s1">] Best HR@10 score: </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">best_score</span><span class="si">}</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">)</span>
         
         <span class="k">return</span></div>
