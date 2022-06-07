@@ -1,0 +1,6 @@
+Model args: {'item_num': 27110, 'seq_max_len': 100, 'num_blocks': 2, 'embedding_dim': 128, 'attention_dim': 128, 'attention_num_heads': 2, 'dropout_rate': 0.2, 'conv_dims': ListWrapper([128, 128]), 'l2_reg': 1e-05, 'history':    epoch   NDCG@10  HR@10
+0    1.0  0.078043  0.142}
+[epoch 1] Best HR@10 score: 0.142
+[epoch 1] Best HR@10 score: 0.097
+[epoch 2] Best HR@10 score: 0.118
+[epoch 3] Best HR@10 score: 0.139
