@@ -47,47 +47,13 @@ df = df.rename({'userId':'userID','movieId':'itemID','timestamp':'time'},axis=1)
 df.head()
 ```
 
-  <div id="df-f0146c0d-8a79-4924-9daa-e3b1bad88db4">
-    <div class="colab-df-container">
-      <div>
-<table border="1" class="dataframe">
-  <thead>
-    <tr style="text-align: right;">
-      <th></th>
-      <th>userID</th>
-      <th>itemID</th>
-    </tr>
-  </thead>
-  <tbody>
-    <tr>
-      <th>0</th>
-      <td>1</td>
-      <td>2762</td>
-    </tr>
-    <tr>
-      <th>1</th>
-      <td>1</td>
-      <td>54503</td>
-    </tr>
-    <tr>
-      <th>2</th>
-      <td>1</td>
-      <td>112552</td>
-    </tr>
-    <tr>
-      <th>3</th>
-      <td>1</td>
-      <td>96821</td>
-    </tr>
-    <tr>
-      <th>4</th>
-      <td>1</td>
-      <td>5577</td>
-    </tr>
-  </tbody>
-</table>
-</div>
-  </div>
+|   | userID | itemID |
+|---|--------|--------|
+| 0 | 1      | 2762   |
+| 1 | 1      | 54503  |
+| 2 | 1      | 112552 |
+| 3 | 1      | 96821  |
+| 4 | 1      | 5577   |
 
 
 ```python
@@ -248,60 +214,15 @@ score = model.get_user_item_score(data,
 ```python
 score.head()
 ```
-  <div id="df-556484ef-c5ea-4d4f-b3ec-ec343da88e4e">
-    <div class="colab-df-container">
-      <div>
 
-<table border="1" class="dataframe">
-  <thead>
-    <tr style="text-align: right;">
-      <th></th>
-      <th>user_id</th>
-      <th>1</th>
-      <th>2</th>
-      <th>3</th>
-    </tr>
-  </thead>
-  <tbody>
-    <tr>
-      <th>0</th>
-      <td>1525</td>
-      <td>5.596944</td>
-      <td>4.241653</td>
-      <td>3.804743</td>
-    </tr>
-    <tr>
-      <th>1</th>
-      <td>1756</td>
-      <td>4.535607</td>
-      <td>2.694459</td>
-      <td>0.858440</td>
-    </tr>
-    <tr>
-      <th>2</th>
-      <td>2408</td>
-      <td>5.883061</td>
-      <td>4.655960</td>
-      <td>4.691791</td>
-    </tr>
-    <tr>
-      <th>3</th>
-      <td>2462</td>
-      <td>5.084695</td>
-      <td>2.942075</td>
-      <td>2.773376</td>
-    </tr>
-    <tr>
-      <th>4</th>
-      <td>3341</td>
-      <td>5.532438</td>
-      <td>4.348150</td>
-      <td>4.073740</td>
-    </tr>
-  </tbody>
-</table>
-</div>
 
+|   |userID|        1 |        2 |         3|
+|--:|-----:|---------:|---------:|---------:|
+| 0 | 1525 | 5.596944 | 4.241653 | 3.804743 |
+| 1 | 1756 | 4.535607 | 2.694459 | 0.858440 |
+| 2 | 2408 | 5.883061 | 4.655960 | 4.691791 |
+| 3 | 2462 | 5.084695 | 2.942075 | 2.773376 |
+| 4 | 3341 | 5.532438 | 4.348150 | 4.073740 |
 
 
 ### get recommendation

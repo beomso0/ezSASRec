@@ -4,7 +4,7 @@
   <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>quickstart &mdash; ezSASRec 0.4.1 documentation</title>
+  <title>QuickStart &mdash; ezSASRec 0.4.1 documentation</title>
       <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
   <!--[if lt IE 9]>
@@ -16,10 +16,11 @@
         <script src="_static/underscore.js"></script>
         <script src="_static/doctools.js"></script>
         <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
-        <script src="https://unpkg.com/@jupyter-widgets/html-manager@^0.20.1/dist/embed-amd.js"></script>
     <script src="_static/js/theme.js"></script>
     <link rel="index" title="Index" href="genindex.html" />
-    <link rel="search" title="Search" href="search.html" /> 
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="SASRec algorithms and utilities" href="model.html" />
+    <link rel="prev" title="ezSASRec" href="index.html" /> 
 </head>
 
 <body class="wy-body-for-nav"> 
@@ -38,11 +39,17 @@
 </div>
         </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
               <p class="caption" role="heading"><span class="caption-text">Quick Start</span></p>
-<ul>
-<li class="toctree-l1"><a class="reference internal" href="example.html">ezSASRec QuickStart</a></li>
-<li class="toctree-l1"><a class="reference internal" href="example.html#Preprocessing">Preprocessing</a></li>
-<li class="toctree-l1"><a class="reference internal" href="example.html#Load-data-and-Train-model">Load data and Train model</a></li>
-<li class="toctree-l1"><a class="reference internal" href="example.html#Predict">Predict</a></li>
+<ul class="current">
+<li class="toctree-l1 current"><a class="current reference internal" href="#">quickstart</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#preprocessing">Preprocessing</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#load-data-and-train-model">Load data and Train model</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#predict">Predict</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#get-score">get score</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#get-recommendation">get recommendation</a></li>
+</ul>
+</li>
+</ul>
+</li>
 </ul>
 <p class="caption" role="heading"><span class="caption-text">Model and Util</span></p>
 <ul>
@@ -64,7 +71,7 @@
           <div role="navigation" aria-label="Page navigation">
   <ul class="wy-breadcrumbs">
       <li><a href="index.html" class="icon icon-home"></a> &raquo;</li>
-      <li>quickstart</li>
+      <li><strong>QuickStart</strong></li>
       <li class="wy-breadcrumbs-aside">
             <a href="_sources/quickstart.md.txt" rel="nofollow"> View page source</a>
       </li>
@@ -99,16 +106,309 @@
 }
 </style>
 <section id="quickstart">
-<h1>quickstart<a class="headerlink" href="#quickstart" title="Permalink to this headline"></a></h1>
-<ul class="simple">
-<li><p>hi</p></li>
-</ul>
+<h1><strong>QuickStart</strong><a class="headerlink" href="#quickstart" title="Permalink to this headline"></a></h1>
+<p>example data source: https://www.kaggle.com/datasets/rounakbanik/the-movies-dataset</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span> 
+<span class="kn">import</span> <span class="nn">pickle</span>
+<span class="kn">from</span> <span class="nn">sasrec.util</span> <span class="kn">import</span> <span class="n">filter_k_core</span><span class="p">,</span> <span class="n">SASRecDataSet</span><span class="p">,</span> <span class="n">load_model</span>
+<span class="kn">from</span> <span class="nn">sasrec.model</span> <span class="kn">import</span> <span class="n">SASREC</span>
+<span class="kn">from</span> <span class="nn">sasrec.sampler</span> <span class="kn">import</span> <span class="n">WarpSampler</span>
+<span class="kn">import</span> <span class="nn">multiprocessing</span>
+</pre></div>
+</div>
+<section id="preprocessing">
+<h2>Preprocessing<a class="headerlink" href="#preprocessing" title="Permalink to this headline"></a></h2>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">path</span> <span class="o">=</span> <span class="s1">&#39;your path&#39;</span>
+</pre></div>
+</div>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="s1">&#39;ratings.csv&#39;</span><span class="p">)</span>
+<span class="n">df</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">rename</span><span class="p">({</span><span class="s1">&#39;userId&#39;</span><span class="p">:</span><span class="s1">&#39;userID&#39;</span><span class="p">,</span><span class="s1">&#39;movieId&#39;</span><span class="p">:</span><span class="s1">&#39;itemID&#39;</span><span class="p">,</span><span class="s1">&#39;timestamp&#39;</span><span class="p">:</span><span class="s1">&#39;time&#39;</span><span class="p">},</span><span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>\
+       <span class="o">.</span><span class="n">sort_values</span><span class="p">(</span><span class="n">by</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;userID&#39;</span><span class="p">,</span><span class="s1">&#39;time&#39;</span><span class="p">])</span>\
+       <span class="o">.</span><span class="n">drop</span><span class="p">([</span><span class="s1">&#39;rating&#39;</span><span class="p">,</span><span class="s1">&#39;time&#39;</span><span class="p">],</span><span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>\
+       <span class="o">.</span><span class="n">reset_index</span><span class="p">(</span><span class="n">drop</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+</pre></div>
+</div>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">df</span><span class="o">.</span><span class="n">head</span><span class="p">()</span>
+</pre></div>
+</div>
+<table class="colwidths-auto docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p></p></th>
+<th class="head"><p>userID</p></th>
+<th class="head"><p>itemID</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>0</p></td>
+<td><p>1</p></td>
+<td><p>2762</p></td>
+</tr>
+<tr class="row-odd"><td><p>1</p></td>
+<td><p>1</p></td>
+<td><p>54503</p></td>
+</tr>
+<tr class="row-even"><td><p>2</p></td>
+<td><p>1</p></td>
+<td><p>112552</p></td>
+</tr>
+<tr class="row-odd"><td><p>3</p></td>
+<td><p>1</p></td>
+<td><p>96821</p></td>
+</tr>
+<tr class="row-even"><td><p>4</p></td>
+<td><p>1</p></td>
+<td><p>5577</p></td>
+</tr>
+</tbody>
+</table>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># filter data</span>
+<span class="c1"># every user and item will appear more than 6 times in filtered_df</span>
+
+<span class="n">filtered_df</span> <span class="o">=</span> <span class="n">filter_k_core</span><span class="p">(</span><span class="n">df</span><span class="p">,</span> <span class="mi">7</span><span class="p">)</span>
+</pre></div>
+</div>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>Original: 270896 users and 45115 items
+Final: 243377 users and 24068 items
+</pre></div>
+</div>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># make maps (encoder)</span>
+
+<span class="n">user_set</span><span class="p">,</span> <span class="n">item_set</span> <span class="o">=</span> <span class="nb">set</span><span class="p">(</span><span class="n">filtered_df</span><span class="p">[</span><span class="s1">&#39;userID&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">unique</span><span class="p">()),</span> <span class="nb">set</span><span class="p">(</span><span class="n">filtered_df</span><span class="p">[</span><span class="s1">&#39;itemID&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">unique</span><span class="p">())</span>
+<span class="n">user_map</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">()</span>
+<span class="n">item_map</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">()</span>
+<span class="k">for</span> <span class="n">u</span><span class="p">,</span> <span class="n">user</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">user_set</span><span class="p">):</span>
+    <span class="n">user_map</span><span class="p">[</span><span class="n">user</span><span class="p">]</span> <span class="o">=</span> <span class="n">u</span><span class="o">+</span><span class="mi">1</span>
+<span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">item</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">item_set</span><span class="p">):</span>
+    <span class="n">item_map</span><span class="p">[</span><span class="n">item</span><span class="p">]</span> <span class="o">=</span> <span class="n">i</span><span class="o">+</span><span class="mi">1</span>
+
+<span class="n">maps</span> <span class="o">=</span> <span class="p">(</span><span class="n">user_map</span><span class="p">,</span> <span class="n">item_map</span><span class="p">)</span>   
+</pre></div>
+</div>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># Encode filtered_df</span>
+
+<span class="n">filtered_df</span><span class="p">[</span><span class="s2">&quot;userID&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">filtered_df</span><span class="p">[</span><span class="s2">&quot;userID&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">apply</span><span class="p">(</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">user_map</span><span class="p">[</span><span class="n">x</span><span class="p">])</span>
+<span class="n">filtered_df</span><span class="p">[</span><span class="s2">&quot;itemID&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">filtered_df</span><span class="p">[</span><span class="s2">&quot;itemID&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">apply</span><span class="p">(</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">item_map</span><span class="p">[</span><span class="n">x</span><span class="p">])</span>
+</pre></div>
+</div>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># save data and maps</span>
+
+<span class="c1"># save sasrec data    </span>
+<span class="n">filtered_df</span><span class="o">.</span><span class="n">to_csv</span><span class="p">(</span><span class="s1">&#39;sasrec_data.txt&#39;</span><span class="p">,</span> <span class="n">sep</span><span class="o">=</span><span class="s2">&quot;</span><span class="se">\t</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">header</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">index</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+
+<span class="c1"># save maps</span>
+<span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="s1">&#39;maps.pkl&#39;</span><span class="p">,</span><span class="s1">&#39;wb&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+    <span class="n">pickle</span><span class="o">.</span><span class="n">dump</span><span class="p">(</span><span class="n">maps</span><span class="p">,</span> <span class="n">f</span><span class="p">)</span>
+</pre></div>
+</div>
+</section>
+<section id="load-data-and-train-model">
+<h2>Load data and Train model<a class="headerlink" href="#load-data-and-train-model" title="Permalink to this headline"></a></h2>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># load data</span>
+
+<span class="n">data</span> <span class="o">=</span> <span class="n">SASRecDataSet</span><span class="p">(</span><span class="s1">&#39;sasrec_data.txt&#39;</span><span class="p">)</span>
+<span class="n">data</span><span class="o">.</span><span class="n">split</span><span class="p">()</span> <span class="c1"># train, val, test split</span>
+              <span class="c1"># the last interactions of each user is used for test</span>
+              <span class="c1"># the last but one will be used for validation</span>
+              <span class="c1"># others will be used for train</span>
+</pre></div>
+</div>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># make model and warmsampler for batch training</span>
+
+<span class="n">max_len</span> <span class="o">=</span> <span class="mi">100</span>
+<span class="n">hidden_units</span> <span class="o">=</span> <span class="mi">128</span>
+<span class="n">batch_size</span> <span class="o">=</span> <span class="mi">2048</span>
+
+<span class="n">model</span> <span class="o">=</span> <span class="n">SASREC</span><span class="p">(</span>
+    <span class="n">item_num</span><span class="o">=</span><span class="n">data</span><span class="o">.</span><span class="n">itemnum</span><span class="p">,</span>
+    <span class="n">seq_max_len</span><span class="o">=</span><span class="n">max_len</span><span class="p">,</span>
+    <span class="n">num_blocks</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span>
+    <span class="n">embedding_dim</span><span class="o">=</span><span class="n">hidden_units</span><span class="p">,</span>
+    <span class="n">attention_dim</span><span class="o">=</span><span class="n">hidden_units</span><span class="p">,</span>
+    <span class="n">attention_num_heads</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span>
+    <span class="n">dropout_rate</span><span class="o">=</span><span class="mf">0.2</span><span class="p">,</span>
+    <span class="n">conv_dims</span> <span class="o">=</span> <span class="p">[</span><span class="n">hidden_units</span><span class="p">,</span> <span class="n">hidden_units</span><span class="p">],</span>
+    <span class="n">l2_reg</span><span class="o">=</span><span class="mf">0.00001</span>
+<span class="p">)</span>
+
+<span class="n">sampler</span> <span class="o">=</span> <span class="n">WarpSampler</span><span class="p">(</span><span class="n">data</span><span class="o">.</span><span class="n">user_train</span><span class="p">,</span> <span class="n">data</span><span class="o">.</span><span class="n">usernum</span><span class="p">,</span> <span class="n">data</span><span class="o">.</span><span class="n">itemnum</span><span class="p">,</span> <span class="n">batch_size</span><span class="o">=</span><span class="n">batch_size</span><span class="p">,</span> <span class="n">maxlen</span><span class="o">=</span><span class="n">max_len</span><span class="p">,</span> <span class="n">n_workers</span><span class="o">=</span><span class="n">multiprocessing</span><span class="o">.</span><span class="n">cpu_count</span><span class="p">())</span>
+</pre></div>
+</div>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># train model</span>
+
+<span class="n">model</span><span class="o">.</span><span class="n">train</span><span class="p">(</span>
+          <span class="n">data</span><span class="p">,</span>
+          <span class="n">sampler</span><span class="p">,</span>
+          <span class="n">num_epochs</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span> 
+          <span class="n">batch_size</span><span class="o">=</span><span class="n">batch_size</span><span class="p">,</span> 
+          <span class="n">lr</span><span class="o">=</span><span class="mf">0.001</span><span class="p">,</span> 
+          <span class="n">val_epoch</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
+          <span class="n">val_target_user_n</span><span class="o">=</span><span class="mi">1000</span><span class="p">,</span> 
+          <span class="n">target_item_n</span><span class="o">=-</span><span class="mi">1</span><span class="p">,</span>
+          <span class="n">auto_save</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+          <span class="n">path</span> <span class="o">=</span> <span class="n">path</span><span class="p">,</span>
+          <span class="n">exp_name</span><span class="o">=</span><span class="s1">&#39;exp_example&#39;</span><span class="p">,</span>
+        <span class="p">)</span>
+</pre></div>
+</div>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>epoch 1 / 3 -----------------------------
+
+Evaluating...    
+
+epoch: 1, test (NDCG@10: 0.04607630127474612, HR@10: 0.097)
+best score model updated and saved
+
+
+epoch 2 / 3 -----------------------------
+
+Evaluating...    
+
+epoch: 2, test (NDCG@10: 0.060855185638025944, HR@10: 0.118)
+best score model updated and saved
+
+
+epoch 3 / 3 -----------------------------
+
+Evaluating...   
+
+epoch: 3, test (NDCG@10: 0.07027207563856912, HR@10: 0.139)
+best score model updated and saved
+</pre></div>
+</div>
+</section>
+<section id="predict">
+<h2>Predict<a class="headerlink" href="#predict" title="Permalink to this headline"></a></h2>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># load trained model</span>
+
+<span class="n">model</span> <span class="o">=</span> <span class="n">load_model</span><span class="p">(</span><span class="n">path</span><span class="p">,</span><span class="s1">&#39;exp_example&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+<section id="get-score">
+<h3>get score<a class="headerlink" href="#get-score" title="Permalink to this headline"></a></h3>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># get user-item score</span>
+
+<span class="c1"># make inv_user_map</span>
+<span class="n">inv_user_map</span> <span class="o">=</span> <span class="p">{</span><span class="n">v</span><span class="p">:</span> <span class="n">k</span> <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">user_map</span><span class="o">.</span><span class="n">items</span><span class="p">()}</span>
+
+<span class="c1"># sample target_user</span>
+<span class="n">model</span><span class="o">.</span><span class="n">sample_val_users</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="mi">100</span><span class="p">)</span>
+<span class="n">encoded_users</span> <span class="o">=</span> <span class="n">model</span><span class="o">.</span><span class="n">val_users</span>
+
+<span class="c1"># get scores</span>
+<span class="n">score</span> <span class="o">=</span> <span class="n">model</span><span class="o">.</span><span class="n">get_user_item_score</span><span class="p">(</span><span class="n">data</span><span class="p">,</span>
+                          <span class="p">[</span><span class="n">inv_user_map</span><span class="p">[</span><span class="n">u</span><span class="p">]</span> <span class="k">for</span> <span class="n">u</span> <span class="ow">in</span> <span class="n">encoded_users</span><span class="p">],</span> <span class="c1"># user_list containing raw(not-encoded) userID </span>
+                          <span class="p">[</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">3</span><span class="p">],</span> <span class="c1"># item_list containing raw(not-encoded) itemID</span>
+                          <span class="n">user_map</span><span class="p">,</span>
+                          <span class="n">item_map</span><span class="p">,</span>   
+                          <span class="n">batch_size</span><span class="o">=</span><span class="mi">10</span>
+                        <span class="p">)</span>
+</pre></div>
+</div>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>100%|██████████| 10/10 [00:00&lt;00:00, 29.67batch/s]
+</pre></div>
+</div>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">score</span><span class="o">.</span><span class="n">head</span><span class="p">()</span>
+</pre></div>
+</div>
+<table class="colwidths-auto docutils align-default">
+<thead>
+<tr class="row-odd"><th class="text-right head"><p></p></th>
+<th class="text-right head"><p>userID</p></th>
+<th class="text-right head"><p>1</p></th>
+<th class="text-right head"><p>2</p></th>
+<th class="text-right head"><p>3</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td class="text-right"><p>0</p></td>
+<td class="text-right"><p>1525</p></td>
+<td class="text-right"><p>5.596944</p></td>
+<td class="text-right"><p>4.241653</p></td>
+<td class="text-right"><p>3.804743</p></td>
+</tr>
+<tr class="row-odd"><td class="text-right"><p>1</p></td>
+<td class="text-right"><p>1756</p></td>
+<td class="text-right"><p>4.535607</p></td>
+<td class="text-right"><p>2.694459</p></td>
+<td class="text-right"><p>0.858440</p></td>
+</tr>
+<tr class="row-even"><td class="text-right"><p>2</p></td>
+<td class="text-right"><p>2408</p></td>
+<td class="text-right"><p>5.883061</p></td>
+<td class="text-right"><p>4.655960</p></td>
+<td class="text-right"><p>4.691791</p></td>
+</tr>
+<tr class="row-odd"><td class="text-right"><p>3</p></td>
+<td class="text-right"><p>2462</p></td>
+<td class="text-right"><p>5.084695</p></td>
+<td class="text-right"><p>2.942075</p></td>
+<td class="text-right"><p>2.773376</p></td>
+</tr>
+<tr class="row-even"><td class="text-right"><p>4</p></td>
+<td class="text-right"><p>3341</p></td>
+<td class="text-right"><p>5.532438</p></td>
+<td class="text-right"><p>4.348150</p></td>
+<td class="text-right"><p>4.073740</p></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="get-recommendation">
+<h3>get recommendation<a class="headerlink" href="#get-recommendation" title="Permalink to this headline"></a></h3>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># get top N recommendation </span>
+
+<span class="n">reco</span> <span class="o">=</span> <span class="n">model</span><span class="o">.</span><span class="n">recommend_item</span><span class="p">(</span><span class="n">data</span><span class="p">,</span>
+                            <span class="n">user_map</span><span class="p">,</span>
+                            <span class="p">[</span><span class="n">inv_user_map</span><span class="p">[</span><span class="n">u</span><span class="p">]</span> <span class="k">for</span> <span class="n">u</span> <span class="ow">in</span> <span class="n">encoded_users</span><span class="p">],</span>
+                            <span class="n">is_test</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+                            <span class="n">top_n</span><span class="o">=</span><span class="mi">5</span><span class="p">)</span>
+</pre></div>
+</div>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>100%|██████████| 100/100 [00:04&lt;00:00, 21.10it/s]
+</pre></div>
+</div>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># returned tuple contains topN recommendations for each user</span>
+
+<span class="n">reco</span>
+</pre></div>
+</div>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>{1525: [(456, 6.0680223),
+  (355, 6.033769),
+  (379, 5.9833336),
+  (591, 5.9718275),
+  (776, 5.8978705)],
+ 1756: [(7088, 5.735977),
+  (15544, 5.5946136),
+  (5904, 5.500249),
+  (355, 5.492655),
+  (22149, 5.4117346)],
+ 2408: [(456, 5.976555),
+  (328, 5.8824606),
+  (588, 5.8614006),
+  (264, 5.7114534),
+  (299, 5.649914)],
+ 2462: [(259, 6.3445344),
+  (591, 6.2664876),
+  (295, 6.105361),
+  (355, 6.0698805),
+  (1201, 5.8477645)],
+ 3341: [(110, 5.510764),
+  (1, 5.4927354),
+  (259, 5.4851904),
+  (161, 5.467624),
+  (208, 5.2486935)], ...}
+</pre></div>
+</div>
+</section>
+</section>
 </section>
 
 
            </div>
           </div>
-          <footer>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="index.html" class="btn btn-neutral float-left" title="ezSASRec" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="model.html" class="btn btn-neutral float-right" title="SASRec algorithms and utilities" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
 
   <hr/>
 

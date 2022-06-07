@@ -13,10 +13,10 @@ The `ezSASRec <https://github.com/beomso0/custom_SASRec>`_ provides tools to tra
 | 2. `microsoft recommenders <https://github.com/microsoft/recommenders>`_
 
 .. toctree::
-   :maxdepth: 1
+   :maxdepth: 2
    :caption: Quick Start
 
-   quickstart <example.ipynb>
+   quickstart <quickstart.md>
 
 .. toctree::
    :maxdepth: 3
