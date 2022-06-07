@@ -1,7 +1,536 @@
 # **ezSASRec**
-
 ## Documentation
 https://ezsasrec.netlify.app
+
+## References
+
+### repos
+1. [kang205 SASRec](https://github.com/kang205/SASRec)
+2. [nnkkmto/SASRec-tf2](https://github.com/nnkkmto/SASRec-tf2)
+3. [microsoft recommenders](https://github.com/microsoft/recommenders)
+
+### papers
+1. [Self-Attentive Sequential Recommendation](https://arxiv.org/pdf/1808.09781.pdf)
+2. [A Case Study on Sampling Strategies for Evaluating Neural Sequential Item Recommendation Models](https://www.informatik.uni-wuerzburg.de/datascience/staff/dallmann/?tx_extbibsonomycsl_publicationlist%5Baction%5D=download&tx_extbibsonomycsl_publicationlist%5Bcontroller%5D=Document&tx_extbibsonomycsl_publicationlist%5BfileName%5D=main.pdf&tx_extbibsonomycsl_publicationlist%5BintraHash%5D=23f589b27e22018936753bb64b33971d&tx_extbibsonomycsl_publicationlist%5BuserName%5D=dallmann&cHash=dd7c54126f6c20972a502e9cc223cec2)
+
+---------------
+# **QuickStart**
+
+```python
+import pandas as pd 
+import pickle
+from sasrec.util import filter_k_core, SASRecDataSet, load_model
+from sasrec.model import SASREC
+from sasrec.sampler import WarpSampler
+import multiprocessing
+```
+
+## Preprocessing
+
+
+```python
+path = 'your path'
+```
+
+
+```python
+df = pd.read_csv('ratings.csv')
+df = df.rename({'userId':'userID','movieId':'itemID','timestamp':'time'},axis=1)\
+       .sort_values(by=['userID','time'])\
+       .drop(['rating','time'],axis=1)\
+       .reset_index(drop=True)
+```
+
+
+```python
+df.head()
+```
+
+
+
+
+
+  <div id="df-f0146c0d-8a79-4924-9daa-e3b1bad88db4">
+    <div class="colab-df-container">
+      <div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>userID</th>
+      <th>itemID</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>0</th>
+      <td>1</td>
+      <td>2762</td>
+    </tr>
+    <tr>
+      <th>1</th>
+      <td>1</td>
+      <td>54503</td>
+    </tr>
+    <tr>
+      <th>2</th>
+      <td>1</td>
+      <td>112552</td>
+    </tr>
+    <tr>
+      <th>3</th>
+      <td>1</td>
+      <td>96821</td>
+    </tr>
+    <tr>
+      <th>4</th>
+      <td>1</td>
+      <td>5577</td>
+    </tr>
+  </tbody>
+</table>
+</div>
+      <button class="colab-df-convert" onclick="convertToInteractive('df-f0146c0d-8a79-4924-9daa-e3b1bad88db4')"
+              title="Convert this dataframe to an interactive table."
+              style="display:none;">
+
+  <svg xmlns="http://www.w3.org/2000/svg" height="24px"viewBox="0 0 24 24"
+       width="24px">
+    <path d="M0 0h24v24H0V0z" fill="none"/>
+    <path d="M18.56 5.44l.94 2.06.94-2.06 2.06-.94-2.06-.94-.94-2.06-.94 2.06-2.06.94zm-11 1L8.5 8.5l.94-2.06 2.06-.94-2.06-.94L8.5 2.5l-.94 2.06-2.06.94zm10 10l.94 2.06.94-2.06 2.06-.94-2.06-.94-.94-2.06-.94 2.06-2.06.94z"/><path d="M17.41 7.96l-1.37-1.37c-.4-.4-.92-.59-1.43-.59-.52 0-1.04.2-1.43.59L10.3 9.45l-7.72 7.72c-.78.78-.78 2.05 0 2.83L4 21.41c.39.39.9.59 1.41.59.51 0 1.02-.2 1.41-.59l7.78-7.78 2.81-2.81c.8-.78.8-2.07 0-2.86zM5.41 20L4 18.59l7.72-7.72 1.47 1.35L5.41 20z"/>
+  </svg>
+      </button>
+
+  <style>
+    .colab-df-container {
+      display:flex;
+      flex-wrap:wrap;
+      gap: 12px;
+    }
+
+    .colab-df-convert {
+      background-color: #E8F0FE;
+      border: none;
+      border-radius: 50%;
+      cursor: pointer;
+      display: none;
+      fill: #1967D2;
+      height: 32px;
+      padding: 0 0 0 0;
+      width: 32px;
+    }
+
+    .colab-df-convert:hover {
+      background-color: #E2EBFA;
+      box-shadow: 0px 1px 2px rgba(60, 64, 67, 0.3), 0px 1px 3px 1px rgba(60, 64, 67, 0.15);
+      fill: #174EA6;
+    }
+
+    [theme=dark] .colab-df-convert {
+      background-color: #3B4455;
+      fill: #D2E3FC;
+    }
+
+    [theme=dark] .colab-df-convert:hover {
+      background-color: #434B5C;
+      box-shadow: 0px 1px 3px 1px rgba(0, 0, 0, 0.15);
+      filter: drop-shadow(0px 1px 2px rgba(0, 0, 0, 0.3));
+      fill: #FFFFFF;
+    }
+  </style>
+
+      <script>
+        const buttonEl =
+          document.querySelector('#df-f0146c0d-8a79-4924-9daa-e3b1bad88db4 button.colab-df-convert');
+        buttonEl.style.display =
+          google.colab.kernel.accessAllowed ? 'block' : 'none';
+
+        async function convertToInteractive(key) {
+          const element = document.querySelector('#df-f0146c0d-8a79-4924-9daa-e3b1bad88db4');
+          const dataTable =
+            await google.colab.kernel.invokeFunction('convertToInteractive',
+                                                     [key], {});
+          if (!dataTable) return;
+
+          const docLinkHtml = 'Like what you see? Visit the ' +
+            '<a target="_blank" href=https://colab.research.google.com/notebooks/data_table.ipynb>data table notebook</a>'
+            + ' to learn more about interactive tables.';
+          element.innerHTML = '';
+          dataTable['output_type'] = 'display_data';
+          await google.colab.output.renderOutput(dataTable, element);
+          const docLink = document.createElement('div');
+          docLink.innerHTML = docLinkHtml;
+          element.appendChild(docLink);
+        }
+      </script>
+    </div>
+  </div>
+
+
+
+
+
+```python
+# filter data
+# every user and item will appear more than 6 times in filtered_df
+
+filtered_df = filter_k_core(df, 7)
+```
+
+    Original: 270896 users and 45115 items
+    Final: 243377 users and 24068 items
+
+
+
+```python
+# make maps (encoder)
+
+user_set, item_set = set(filtered_df['userID'].unique()), set(filtered_df['itemID'].unique())
+user_map = dict()
+item_map = dict()
+for u, user in enumerate(user_set):
+    user_map[user] = u+1
+for i, item in enumerate(item_set):
+    item_map[item] = i+1
+
+maps = (user_map, item_map)   
+```
+
+
+```python
+# Encode filtered_df
+
+filtered_df["userID"] = filtered_df["userID"].apply(lambda x: user_map[x])
+filtered_df["itemID"] = filtered_df["itemID"].apply(lambda x: item_map[x])
+```
+
+```python
+# save data and maps
+
+# save sasrec data    
+filtered_df.to_csv('sasrec_data.txt', sep="\t", header=False, index=False)
+
+# save maps
+with open('maps.pkl','wb') as f:
+    pickle.dump(maps, f)
+```
+
+# Load data and Train model
+
+
+```python
+# load data
+
+data = SASRecDataSet('sasrec_data.txt')
+data.split() # train, val, test split
+              # the last interactions of each user is used for test
+              # the last but one will be used for validation
+              # others will be used for train
+```
+
+
+```python
+# make model and warmsampler for batch training
+
+max_len = 100
+hidden_units = 128
+batch_size = 2048
+
+model = SASREC(
+    item_num=data.itemnum,
+    seq_max_len=max_len,
+    num_blocks=2,
+    embedding_dim=hidden_units,
+    attention_dim=hidden_units,
+    attention_num_heads=2,
+    dropout_rate=0.2,
+    conv_dims = [hidden_units, hidden_units],
+    l2_reg=0.00001
+)
+
+sampler = WarpSampler(data.user_train, data.usernum, data.itemnum, batch_size=batch_size, maxlen=max_len, n_workers=multiprocessing.cpu_count())
+```
+
+
+```python
+# train model
+
+model.train(
+          data,
+          sampler,
+          num_epochs=3, 
+          batch_size=batch_size, 
+          lr=0.001, 
+          val_epoch=1,
+          val_target_user_n=1000, 
+          target_item_n=-1,
+          auto_save=True,
+          path = path,
+          exp_name='exp_example',
+        )
+```
+    epoch 1 / 3 -----------------------------
+
+    Evaluating...    
+
+    epoch: 1, test (NDCG@10: 0.04607630127474612, HR@10: 0.097)
+    best score model updated and saved
+
+
+    epoch 2 / 3 -----------------------------
+
+    Evaluating...    
+
+    epoch: 2, test (NDCG@10: 0.060855185638025944, HR@10: 0.118)
+    best score model updated and saved
+
+
+    epoch 3 / 3 -----------------------------
+
+    Evaluating...   
+
+    epoch: 3, test (NDCG@10: 0.07027207563856912, HR@10: 0.139)
+    best score model updated and saved
+
+
+# Predict
+
+
+```python
+# load trained model
+
+model = load_model(path,'exp_example')
+```
+
+## get score
+
+
+```python
+# get user-item score
+
+# make inv_user_map
+inv_user_map = {v: k for k, v in user_map.items()}
+
+# sample target_user
+model.sample_val_users(data, 100)
+encoded_users = model.val_users
+
+# get scores
+score = model.get_user_item_score(data,
+                          [inv_user_map[u] for u in encoded_users], # user_list containing raw(not-encoded) userID 
+                          [1,2,3], # item_list containing raw(not-encoded) itemID
+                          user_map,
+                          item_map,   
+                          batch_size=10
+                        )
+```
+    100%|██████████| 10/10 [00:00<00:00, 29.67batch/s]
+```python
+score.head()
+```
+  <div id="df-556484ef-c5ea-4d4f-b3ec-ec343da88e4e">
+    <div class="colab-df-container">
+      <div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>user_id</th>
+      <th>1</th>
+      <th>2</th>
+      <th>3</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>0</th>
+      <td>1525</td>
+      <td>5.596944</td>
+      <td>4.241653</td>
+      <td>3.804743</td>
+    </tr>
+    <tr>
+      <th>1</th>
+      <td>1756</td>
+      <td>4.535607</td>
+      <td>2.694459</td>
+      <td>0.858440</td>
+    </tr>
+    <tr>
+      <th>2</th>
+      <td>2408</td>
+      <td>5.883061</td>
+      <td>4.655960</td>
+      <td>4.691791</td>
+    </tr>
+    <tr>
+      <th>3</th>
+      <td>2462</td>
+      <td>5.084695</td>
+      <td>2.942075</td>
+      <td>2.773376</td>
+    </tr>
+    <tr>
+      <th>4</th>
+      <td>3341</td>
+      <td>5.532438</td>
+      <td>4.348150</td>
+      <td>4.073740</td>
+    </tr>
+  </tbody>
+</table>
+</div>
+      <button class="colab-df-convert" onclick="convertToInteractive('df-556484ef-c5ea-4d4f-b3ec-ec343da88e4e')"
+              title="Convert this dataframe to an interactive table."
+              style="display:none;">
+
+  <svg xmlns="http://www.w3.org/2000/svg" height="24px"viewBox="0 0 24 24"
+       width="24px">
+    <path d="M0 0h24v24H0V0z" fill="none"/>
+    <path d="M18.56 5.44l.94 2.06.94-2.06 2.06-.94-2.06-.94-.94-2.06-.94 2.06-2.06.94zm-11 1L8.5 8.5l.94-2.06 2.06-.94-2.06-.94L8.5 2.5l-.94 2.06-2.06.94zm10 10l.94 2.06.94-2.06 2.06-.94-2.06-.94-.94-2.06-.94 2.06-2.06.94z"/><path d="M17.41 7.96l-1.37-1.37c-.4-.4-.92-.59-1.43-.59-.52 0-1.04.2-1.43.59L10.3 9.45l-7.72 7.72c-.78.78-.78 2.05 0 2.83L4 21.41c.39.39.9.59 1.41.59.51 0 1.02-.2 1.41-.59l7.78-7.78 2.81-2.81c.8-.78.8-2.07 0-2.86zM5.41 20L4 18.59l7.72-7.72 1.47 1.35L5.41 20z"/>
+  </svg>
+      </button>
+
+  <style>
+    .colab-df-container {
+      display:flex;
+      flex-wrap:wrap;
+      gap: 12px;
+    }
+
+    .colab-df-convert {
+      background-color: #E8F0FE;
+      border: none;
+      border-radius: 50%;
+      cursor: pointer;
+      display: none;
+      fill: #1967D2;
+      height: 32px;
+      padding: 0 0 0 0;
+      width: 32px;
+    }
+
+    .colab-df-convert:hover {
+      background-color: #E2EBFA;
+      box-shadow: 0px 1px 2px rgba(60, 64, 67, 0.3), 0px 1px 3px 1px rgba(60, 64, 67, 0.15);
+      fill: #174EA6;
+    }
+
+    [theme=dark] .colab-df-convert {
+      background-color: #3B4455;
+      fill: #D2E3FC;
+    }
+
+    [theme=dark] .colab-df-convert:hover {
+      background-color: #434B5C;
+      box-shadow: 0px 1px 3px 1px rgba(0, 0, 0, 0.15);
+      filter: drop-shadow(0px 1px 2px rgba(0, 0, 0, 0.3));
+      fill: #FFFFFF;
+    }
+  </style>
+
+      <script>
+        const buttonEl =
+          document.querySelector('#df-556484ef-c5ea-4d4f-b3ec-ec343da88e4e button.colab-df-convert');
+        buttonEl.style.display =
+          google.colab.kernel.accessAllowed ? 'block' : 'none';
+
+        async function convertToInteractive(key) {
+          const element = document.querySelector('#df-556484ef-c5ea-4d4f-b3ec-ec343da88e4e');
+          const dataTable =
+            await google.colab.kernel.invokeFunction('convertToInteractive',
+                                                     [key], {});
+          if (!dataTable) return;
+
+          const docLinkHtml = 'Like what you see? Visit the ' +
+            '<a target="_blank" href=https://colab.research.google.com/notebooks/data_table.ipynb>data table notebook</a>'
+            + ' to learn more about interactive tables.';
+          element.innerHTML = '';
+          dataTable['output_type'] = 'display_data';
+          await google.colab.output.renderOutput(dataTable, element);
+          const docLink = document.createElement('div');
+          docLink.innerHTML = docLinkHtml;
+          element.appendChild(docLink);
+        }
+      </script>
+    </div>
+  </div>
+
+
+## get recommendation
+
+
+```python
+# get top N recommendation 
+
+reco = model.recommend_item(data,
+                            user_map,
+                            [inv_user_map[u] for u in encoded_users],
+                            is_test=True,
+                            top_n=5)
+```
+    100%|██████████| 100/100 [00:04<00:00, 21.10it/s]
+
+```python
+# returned tuple contains topN recommendations for each user
+
+reco
+```
+    {1525: [(456, 6.0680223),
+      (355, 6.033769),
+      (379, 5.9833336),
+      (591, 5.9718275),
+      (776, 5.8978705)],
+     1756: [(7088, 5.735977),
+      (15544, 5.5946136),
+      (5904, 5.500249),
+      (355, 5.492655),
+      (22149, 5.4117346)],
+     2408: [(456, 5.976555),
+      (328, 5.8824606),
+      (588, 5.8614006),
+      (264, 5.7114534),
+      (299, 5.649914)],
+     2462: [(259, 6.3445344),
+      (591, 6.2664876),
+      (295, 6.105361),
+      (355, 6.0698805),
+      (1201, 5.8477645)],
+     3341: [(110, 5.510764),
+      (1, 5.4927354),
+      (259, 5.4851904),
+      (161, 5.467624),
+      (208, 5.2486935)], ...}
+
+
+
+
 <!-- 
 ## Introduction
 This repository contains tools to train, evaluate and save SASRec model.

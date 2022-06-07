@@ -370,15 +370,6 @@ class LayerNormalization(tf.keras.layers.Layer):
 class SASREC(tf.keras.Model):
     """Self-Attentive Sequential Recommendation Using Transformer    
 
-    :Citation:
-
-        Wang-Cheng Kang, Julian McAuley (2018), Self-Attentive Sequential
-        Recommendation. Proceedings of IEEE International Conference on
-        Data Mining (ICDM'18)
-
-        Original source code from nnkkmto/SASRec-tf2,
-        https://github.com/nnkkmto/SASRec-tf2
-
     Keyword Args:
         item_num (int): Number of items in the dataset.
         seq_max_len (int): Maximum number of items in user history.
