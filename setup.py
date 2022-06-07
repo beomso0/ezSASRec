@@ -8,7 +8,7 @@ with open("README.md", "r") as fh:
 
 setuptools.setup(
     name="ezSASRec", 
-    version="0.8.9",
+    version="1.0.0",
     author="Beomso0",
     license='MIT',
     author_email="univ3352@gmail.com",
