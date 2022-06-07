@@ -134,7 +134,7 @@ with open('maps.pkl','wb') as f:
     pickle.dump(maps, f)
 ```
 
-# Load data and Train model
+## Load data and Train model
 
 
 ```python
@@ -212,7 +212,7 @@ model.train(
     best score model updated and saved
 
 
-# Predict
+## Predict
 
 
 ```python
@@ -221,7 +221,7 @@ model.train(
 model = load_model(path,'exp_example')
 ```
 
-## get score
+### get score
 
 
 ```python
@@ -303,7 +303,7 @@ score.head()
 
 
 
-## get recommendation
+### get recommendation
 
 
 ```python
