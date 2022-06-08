@@ -1,4 +1,9 @@
 # **ezSASRec**
+
+
+An easy and efficient tool to build sequential recommendation system utilizing SASRec
+
+
 ## Documentation
 https://ezsasrec.netlify.app
 

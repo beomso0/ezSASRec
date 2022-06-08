@@ -6,7 +6,7 @@
 ezSASRec
 =========================================
 
-The `ezSASRec <https://github.com/beomso0/custom_SASRec>`_ provides tools to train, evaluate and save SASRec model. 
+The `ezSASRec <https://github.com/beomso0/custom_SASRec>`_ provides an easy and efficient tool to build sequential recommendation system utilizing SASRec. 
 
 | Original codes and architectures are from these repositories.
 | 1. `kang205 SASRec <https://github.com/kang205/SASRec>`_
