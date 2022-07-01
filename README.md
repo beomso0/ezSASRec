@@ -1,4 +1,4 @@
-# **ezSASRec: The easiest way to utilize SASRec (Self-Attentive Sequential Recommendation) for your system**
+# **ezSASRec: The easiest way to utilize SASRec (Self-Attentive Sequential Recommendation) for your system **
 
 
 An easy and efficient tool to build sequential recommendation system utilizing SASRec
