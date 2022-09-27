@@ -1,5 +1,6 @@
 # **ezSASRec: The easiest way to utilize SASRec (Self-Attentive Sequential Recommendation) for your system**
 
+Kim Beomsoo. @SNU.
 
 This repository contains the easiest and most efficient tool to build sequential recommendation system utilizing SASRec.
 
