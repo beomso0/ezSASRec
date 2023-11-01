@@ -6,7 +6,7 @@ This repository contains the easiest and most efficient tool to build sequential
 
 
 ## Documentation
-https://ezsasrec.netlify.app
+[Documentation web page](https://ezsasrec.netlify.app/)
 
 ## References
 
